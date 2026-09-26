@@ -1,0 +1,707 @@
+<title>Meal Planner</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..600&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#FAF8F3;
+    --surface:#FFFFFF;
+    --surface-2:#F3EFE6;
+    --border:#E4DFD3;
+    --text:#2B2A26;
+    --text-muted:#6B6558;
+    --accent:#4C7A5E;
+    --accent-contrast:#FFFFFF;
+    --tag-bg:#EAF1EC;
+    --tag-text:#3D6350;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1B1A17; --surface:#242320; --surface-2:#2C2A25; --border:#3A3830;
+      --text:#EDEAE2; --text-muted:#A6A093; --accent:#7FB08F; --accent-contrast:#10130F;
+      --tag-bg:#233028; --tag-text:#9FCBAE;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1B1A17; --surface:#242320; --surface-2:#2C2A25; --border:#3A3830;
+    --text:#EDEAE2; --text-muted:#A6A093; --accent:#7FB08F; --accent-contrast:#10130F;
+    --tag-bg:#233028; --tag-text:#9FCBAE;
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,sans-serif;padding-inline:20px;padding-block:32px;line-height:1.5;}
+  .wrap{max-width:720px;margin:0 auto;}
+
+  header{margin-bottom:28px;}
+  .eyebrow{font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 8px;}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:clamp(28px,6vw,38px);margin:0 0 10px;text-wrap:balance;}
+  header p{color:var(--text-muted);margin:0;max-width:56ch;}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:18px;}
+  .card h2{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:18px;margin:0 0 4px;}
+  .card .hint{color:var(--text-muted);font-size:13px;margin:0 0 16px;}
+
+  .field{margin-bottom:16px;}
+  .field:last-child{margin-bottom:0;}
+  label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
+  .sub{font-weight:400;color:var(--text-muted);font-size:12px;}
+  input[type="text"],input[type="number"],textarea,select{
+    width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
+    padding:10px 12px;font-size:14px;color:var(--text);font-family:inherit;
+  }
+  textarea{resize:vertical;min-height:56px;}
+  input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+
+  .row{display:flex;gap:12px;flex-wrap:wrap;}
+  .row > .field{flex:1 1 140px;}
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{border:1px solid var(--border);background:var(--surface-2);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;user-select:none;color:var(--text);position:relative;}
+  .chip input{position:absolute;opacity:0;pointer-events:none;}
+  .chip.active{background:var(--accent);color:var(--accent-contrast);border-color:var(--accent);font-weight:600;}
+
+  fieldset{border:none;padding:0;margin:0;}
+  .radio-row{display:flex;flex-direction:column;gap:8px;}
+  .radio-opt{display:flex;align-items:flex-start;gap:8px;font-size:14px;cursor:pointer;}
+  .radio-opt input{margin-top:3px;accent-color:var(--accent);}
+  .radio-opt .opt-label{font-weight:500;}
+  .radio-opt .opt-sub{color:var(--text-muted);font-size:12px;display:block;}
+
+  button.primary{
+    background:var(--accent);color:var(--accent-contrast);border:none;border-radius:10px;
+    padding:14px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;
+  }
+  button.secondary{background:transparent;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+
+  #results{display:none;}
+  #results.show{display:block;}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--border);}
+  th{color:var(--text-muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.03em;}
+  .table-wrap{overflow-x:auto;}
+
+  .recipe{border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;background:var(--surface-2);}
+  .recipe:last-child{margin-bottom:0;}
+  .recipe-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+  .recipe h3{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:16px;margin:0;}
+  .recipe .meta{font-size:12px;color:var(--text-muted);}
+  .tag{display:inline-block;background:var(--tag-bg);color:var(--tag-text);font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;margin:0 6px 6px 0;}
+  .recipe ul{margin:8px 0;padding-left:18px;font-size:13.5px;}
+  .recipe p.method{font-size:13.5px;margin:8px 0 0;}
+
+  .shop-group{margin-bottom:14px;}
+  .shop-group:last-child{margin-bottom:0;}
+  .shop-group h4{font-size:13px;text-transform:uppercase;letter-spacing:0.03em;color:var(--accent);margin:0 0 8px;}
+  .shop-group ul{margin:0;padding-left:18px;font-size:14px;}
+  .shop-group li{margin-bottom:4px;}
+
+  #copyMsg{font-size:12px;color:var(--accent);font-weight:600;align-self:center;opacity:0;transition:opacity 0.2s;}
+  #copyMsg.show{opacity:1;}
+  #planOutput{position:absolute;left:-9999px;top:-9999px;}
+
+  footer{margin-top:28px;color:var(--text-muted);font-size:12px;text-align:center;}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Shopping &amp; Eating App — planner</p>
+    <h1>Meal Planner</h1>
+    <p>Set your requirements below. Your meal plan, recipes and shopping list are built instantly on this page — nothing is sent anywhere, nothing is saved except (optionally) in this browser for next time.</p>
+  </header>
+
+  <form id="reqForm">
+    <div class="card">
+      <h2>Basics</h2>
+      <p class="hint">How much cooking to plan for.</p>
+      <div class="row">
+        <div class="field"><label for="days">Days</label><input type="number" id="days" min="1" max="14" value="5"></div>
+        <div class="field"><label for="mealsPerDay">Meals / day</label><input type="number" id="mealsPerDay" min="1" max="4" value="2"></div>
+        <div class="field"><label for="maxTime">Max cook time <span class="sub">(min)</span></label><input type="number" id="maxTime" min="0" max="180" value="30"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Proteins</h2>
+      <p class="hint">Select what's on the menu. Leave blank for no preference.</p>
+      <div class="chips" id="proteinChips">
+        <label class="chip"><input type="checkbox" value="Chicken">Chicken</label>
+        <label class="chip"><input type="checkbox" value="Salmon">Salmon</label>
+        <label class="chip"><input type="checkbox" value="Lamb">Lamb</label>
+        <label class="chip"><input type="checkbox" value="Beef">Beef</label>
+        <label class="chip"><input type="checkbox" value="Duck">Duck</label>
+        <label class="chip"><input type="checkbox" value="Turkey">Turkey</label>
+        <label class="chip"><input type="checkbox" value="Pork">Pork</label>
+        <label class="chip"><input type="checkbox" value="Tuna">Tuna</label>
+        <label class="chip"><input type="checkbox" value="Eggs">Eggs</label>
+        <label class="chip"><input type="checkbox" value="Tofu">Tofu</label>
+        <label class="chip"><input type="checkbox" value="Paneer">Paneer</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Nutrition targets</h2>
+      <p class="hint">Used to steer recipe choice — not a strict calorie count, though each recipe now shows a rough calorie estimate.</p>
+      <div class="row">
+        <div class="field">
+          <label for="proteinTarget">Protein / meal <span class="sub">(g)</span></label>
+          <input type="number" id="proteinTarget" min="0" max="100" value="30">
+        </div>
+        <div class="field">
+          <label for="fibreTarget">Daily fibre target <span class="sub">(g, optional)</span></label>
+          <input type="number" id="fibreTarget" min="0" max="60" placeholder="e.g. 30">
+        </div>
+      </div>
+      <div class="field">
+        <label for="macroSplit">Macro-style split</label>
+        <select id="macroSplit">
+          <option value="Plate thirds (1/3 protein, 1/3 carb, 1/3 veg-fibre)">Plate thirds (1/3 protein, 1/3 carb, 1/3 veg-fibre)</option>
+          <option value="40% protein / 40% carbs+fat / 20% fibre+minerals">40% protein / 40% carbs+fat / 20% fibre+minerals</option>
+          <option value="No preference">No preference</option>
+          <option value="Custom">Custom (describe below)</option>
+        </select>
+      </div>
+      <div class="field" id="macroCustomField" hidden>
+        <label for="macroCustom">Custom split</label>
+        <input type="text" id="macroCustom" placeholder="Describe your own split">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Cooking style</h2>
+      <fieldset class="radio-row">
+        <label class="radio-opt"><input type="radio" name="cookStyle" value="batch" checked><span><span class="opt-label">Batch-cook once</span><span class="opt-sub">Prefer recipes that hold and reheat well through the week</span></span></label>
+        <label class="radio-opt"><input type="radio" name="cookStyle" value="quick"><span><span class="opt-label">Quick, fresh each time</span><span class="opt-sub">Prefer fast recipes cooked fresh, within the time limit above</span></span></label>
+        <label class="radio-opt"><input type="radio" name="cookStyle" value="any"><span class="opt-label">No preference</span></label>
+      </fieldset>
+      <div class="field" style="margin-top:16px;">
+        <label>Lunch handling</label>
+        <fieldset class="radio-row">
+          <label class="radio-opt"><input type="radio" name="lunchStyle" value="cold"><span class="opt-label">Cold, no reheating</span></label>
+          <label class="radio-opt"><input type="radio" name="lunchStyle" value="any" checked><span class="opt-label">No preference</span></label>
+        </fieldset>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Store, budget &amp; exclusions</h2>
+      <p class="hint">Budget is shown as a reminder alongside your list — there's no pricing data behind it, so it isn't used to pick cheaper recipes.</p>
+      <div class="row">
+        <div class="field">
+          <label for="store">Shopping at <span class="sub">(optional)</span></label>
+          <input type="text" id="store" placeholder="e.g. Lidl, Asda, Tesco">
+        </div>
+        <div class="field">
+          <label for="budget">Weekly budget <span class="sub">(optional)</span></label>
+          <input type="text" id="budget" placeholder="e.g. £40">
+        </div>
+      </div>
+      <div class="field">
+        <label for="exclusions">Ingredients to avoid <span class="sub">(comma-separated, optional)</span></label>
+        <input type="text" id="exclusions" placeholder="e.g. dairy, shellfish">
+      </div>
+    </div>
+
+    <button type="submit" class="primary">Generate my plan</button>
+  </form>
+
+  <div id="results">
+    <div class="card">
+      <h2>Your meal plan</h2>
+      <p class="hint" id="planSummary"></p>
+      <div class="table-wrap"><table id="planTable"></table></div>
+      <div class="btn-row">
+        <button type="button" class="secondary" id="regenBtn">Shuffle recipes</button>
+        <button type="button" class="secondary" id="copyBtn">Copy full plan as text</button>
+        <span id="copyMsg">Copied</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Recipes</h2>
+      <div id="recipeList"></div>
+    </div>
+
+    <div class="card">
+      <h2>Shopping list</h2>
+      <div id="shopList"></div>
+    </div>
+  </div>
+
+  <footer>Meal Planner — a standalone tool for the Shopping &amp; Eating App project. Runs entirely on your device.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var RECIPES = [
+    {id:'chicken-stirfry',name:'Chicken Stir-Fry',protein:'Chicken',mealTypes:['lunch','dinner'],cookStyle:'quick',portability:'reheat',time:20,proteinG:33,fibreG:6,kcal:480,
+      ingredients:[{name:'Chicken breast',qty:150,unit:'g'},{name:'Mixed peppers',qty:80,unit:'g'},{name:'Tenderstem broccoli',qty:80,unit:'g'},{name:'Garlic',qty:1,unit:'clove'},{name:'Fresh ginger',qty:5,unit:'g'},{name:'Soy sauce',qty:15,unit:'ml'},{name:'Rice (dry)',qty:50,unit:'g'}],
+      method:'Cook rice separately. Slice chicken and stir-fry in a hot pan 6-8 min. Add peppers and broccoli, stir-fry 4-5 min. Add garlic, ginger and soy sauce, cook 1-2 min more. Serve over rice.'},
+    {id:'chicken-fajita',name:'Chicken Fajita Bowl',protein:'Chicken',mealTypes:['dinner'],cookStyle:'batch',portability:'reheat',time:25,proteinG:35,fibreG:9,kcal:520,
+      ingredients:[{name:'Chicken breast',qty:150,unit:'g'},{name:'Mixed peppers',qty:80,unit:'g'},{name:'Onion',qty:50,unit:'g'},{name:'Black beans',qty:100,unit:'g'},{name:'Rice (dry)',qty:50,unit:'g'},{name:'Fajita seasoning',qty:5,unit:'g'},{name:'Avocado',qty:0.5,unit:'whole'}],
+      method:'Roast chicken strips, peppers and onion on a tray with fajita seasoning, 20 min at 200C. Serve over rice and black beans with avocado.'},
+    {id:'chicken-caesar',name:'Chicken Caesar-Style Box',protein:'Chicken',mealTypes:['lunch'],cookStyle:'batch',portability:'cold',time:15,proteinG:32,fibreG:7,kcal:460,
+      ingredients:[{name:'Chicken breast',qty:150,unit:'g'},{name:'Romaine lettuce',qty:80,unit:'g'},{name:'Cherry tomatoes',qty:50,unit:'g'},{name:'Cucumber',qty:50,unit:'g'},{name:'Chickpeas',qty:60,unit:'g'},{name:'Greek yoghurt dressing',qty:30,unit:'g'}],
+      method:'Bake or grill chicken, slice once cooled. Toss with lettuce, tomatoes, cucumber, toasted chickpeas and dressing. Pack cold.'},
+    {id:'chicken-grilled',name:'Grilled Chicken, Potatoes & Green Beans',protein:'Chicken',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:20,proteinG:33,fibreG:6,kcal:430,
+      ingredients:[{name:'Chicken breast',qty:150,unit:'g'},{name:'New potatoes',qty:200,unit:'g'},{name:'Green beans',qty:80,unit:'g'}],
+      method:'Grill or pan-fry chicken about 8 min per side. Boil potatoes 15 min and halve. Steam green beans 5 min.'},
+    {id:'salmon-traybake',name:'Salmon Traybake',protein:'Salmon',mealTypes:['dinner'],cookStyle:'batch',portability:'reheat',time:20,proteinG:30,fibreG:6,kcal:510,
+      ingredients:[{name:'Salmon fillet',qty:150,unit:'g'},{name:'Sweet potato',qty:200,unit:'g'},{name:'Tenderstem broccoli',qty:100,unit:'g'},{name:'Lemon',qty:0.25,unit:'whole'},{name:'Olive oil',qty:10,unit:'ml'}],
+      method:'Roast salmon, sweet potato wedges and broccoli together at 200C for 18-20 min. Squeeze lemon over before serving.'},
+    {id:'salmon-potato-broccoli',name:'Salmon, Potatoes & Broccoli',protein:'Salmon',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:20,proteinG:30,fibreG:5,kcal:480,
+      ingredients:[{name:'Salmon fillet',qty:150,unit:'g'},{name:'New potatoes',qty:200,unit:'g'},{name:'Tenderstem broccoli',qty:80,unit:'g'},{name:'Lemon',qty:0.25,unit:'whole'}],
+      method:'Boil potatoes 15 min. Pan-sear salmon skin-down 4 min, flip 3 min. Steam broccoli 5 min.'},
+    {id:'salmon-quinoa',name:'Salmon & Quinoa Power Bowl',protein:'Salmon',mealTypes:['lunch'],cookStyle:'batch',portability:'cold',time:20,proteinG:30,fibreG:10,kcal:610,
+      ingredients:[{name:'Salmon fillet',qty:130,unit:'g'},{name:'Quinoa (dry)',qty:50,unit:'g'},{name:'Black beans',qty:80,unit:'g'},{name:'Avocado',qty:0.5,unit:'whole'},{name:'Cherry tomatoes',qty:50,unit:'g'},{name:'Lime',qty:0.5,unit:'whole'}],
+      method:'Bake salmon, flake once cool. Cook quinoa and cool. Combine with beans, avocado, tomatoes and a lime dressing. Pack cold.'},
+    {id:'salmon-couscous',name:'Salmon & Couscous',protein:'Salmon',mealTypes:['lunch','dinner'],cookStyle:'quick',portability:'cold',time:15,proteinG:29,fibreG:6,kcal:465,
+      ingredients:[{name:'Salmon fillet',qty:130,unit:'g'},{name:'Couscous (dry)',qty:50,unit:'g'},{name:'Courgette',qty:80,unit:'g'},{name:'Cherry tomatoes',qty:50,unit:'g'}],
+      method:'Pan-sear salmon. Soak couscous in boiling water 5 min. Pan-roast courgette and tomatoes. Combine and serve warm or cold.'},
+    {id:'lamb-chops',name:'Lamb Chops, Potatoes & Green Beans',protein:'Lamb',mealTypes:['lunch','dinner'],cookStyle:'quick',portability:'reheat',time:20,proteinG:30,fibreG:5,kcal:560,
+      ingredients:[{name:'Lamb chops',qty:2,unit:'chop'},{name:'New potatoes',qty:200,unit:'g'},{name:'Green beans',qty:80,unit:'g'}],
+      method:'Pan-fry lamb chops 3-4 min per side. Boil potatoes 15 min. Steam green beans 5 min.'},
+    {id:'lamb-stirfry',name:'Lamb Mince Stir-Fry',protein:'Lamb',mealTypes:['lunch','dinner'],cookStyle:'quick',portability:'reheat',time:15,proteinG:28,fibreG:5,kcal:545,
+      ingredients:[{name:'Lamb mince',qty:120,unit:'g'},{name:'Mixed peppers',qty:80,unit:'g'},{name:'Tenderstem broccoli',qty:80,unit:'g'},{name:'Garlic',qty:1,unit:'clove'},{name:'Soy sauce',qty:15,unit:'ml'},{name:'Rice (dry)',qty:50,unit:'g'}],
+      method:'Brown lamb mince 6-8 min. Add peppers and broccoli, cook 4-5 min. Add garlic and soy sauce. Serve over rice.'},
+    {id:'tuna-beans',name:'Tuna & Baked Beans',protein:'Tuna',mealTypes:['lunch','dinner'],cookStyle:'quick',portability:'cold',time:10,proteinG:30,fibreG:8,kcal:600,
+      ingredients:[{name:'Tuna (tinned)',qty:1,unit:'tin'},{name:'Baked beans',qty:200,unit:'g'},{name:'Jacket potato',qty:1,unit:'whole'},{name:'Frozen peas',qty:50,unit:'g'}],
+      method:'Microwave or bake the jacket potato. Heat the beans. Steam the peas. Split potato, top with beans and drained tuna, peas on the side.'},
+    {id:'tuna-salad',name:'Tuna & Bean Salad Box',protein:'Tuna',mealTypes:['lunch'],cookStyle:'batch',portability:'cold',time:10,proteinG:28,fibreG:9,kcal:380,
+      ingredients:[{name:'Tuna (tinned)',qty:1,unit:'tin'},{name:'Mixed beans',qty:150,unit:'g'},{name:'Cherry tomatoes',qty:50,unit:'g'},{name:'Cucumber',qty:50,unit:'g'},{name:'Olive oil & lemon dressing',qty:15,unit:'ml'}],
+      method:'Drain tuna and beans. Combine with tomatoes, cucumber and dressing. Pack cold — no cooking needed.'},
+    {id:'beef-stirfry',name:'Beef Stir-Fry',protein:'Beef',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:15,proteinG:32,fibreG:5,kcal:555,
+      ingredients:[{name:'Beef strips',qty:150,unit:'g'},{name:'Mixed peppers',qty:80,unit:'g'},{name:'Tenderstem broccoli',qty:80,unit:'g'},{name:'Garlic',qty:1,unit:'clove'},{name:'Soy sauce',qty:15,unit:'ml'},{name:'Rice (dry)',qty:50,unit:'g'}],
+      method:'Sear beef strips 3-4 min. Add veg, cook 4-5 min. Add garlic and soy sauce. Serve over rice.'},
+    {id:'beef-chilli',name:'Beef & Bean Chilli Box',protein:'Beef',mealTypes:['lunch','dinner'],cookStyle:'batch',portability:'reheat',time:20,proteinG:30,fibreG:9,kcal:640,
+      ingredients:[{name:'Beef mince',qty:130,unit:'g'},{name:'Kidney beans',qty:100,unit:'g'},{name:'Chopped tomatoes',qty:150,unit:'g'},{name:'Onion',qty:50,unit:'g'},{name:'Rice (dry)',qty:50,unit:'g'}],
+      method:'Brown mince with onion, add tomatoes and beans, simmer 15 min. Serve over rice.'},
+    {id:'duck-veg-mash',name:'Grilled Duck with Veg & Mash',protein:'Duck',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:25,proteinG:32,fibreG:6,kcal:590,
+      ingredients:[{name:'Duck breast',qty:150,unit:'g'},{name:'Potatoes',qty:200,unit:'g'},{name:'Carrots',qty:80,unit:'g'},{name:'Green beans',qty:60,unit:'g'},{name:'Butter or milk',qty:20,unit:'g'}],
+      method:'Score duck skin, pan-fry skin-down 6 min, flip 4 min, then rest. Boil potatoes and mash with butter or milk. Steam carrots and beans.'},
+    {id:'turkey-avocado',name:'Turkey Bacon & Avocado Box',protein:'Turkey',mealTypes:['lunch'],cookStyle:'quick',portability:'cold',time:10,proteinG:22,fibreG:8,kcal:650,
+      ingredients:[{name:'Turkey bacon',qty:3,unit:'rasher'},{name:'Avocado',qty:1,unit:'whole'},{name:'Eggs',qty:2,unit:'egg'},{name:'Wholemeal toast',qty:2,unit:'slice'}],
+      method:'Grill the turkey bacon. Boil or fry the eggs. Mash avocado onto toast, top with bacon and egg.'},
+    {id:'pork-stirfry',name:'Pork Stir-Fry',protein:'Pork',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:15,proteinG:31,fibreG:5,kcal:525,
+      ingredients:[{name:'Pork strips',qty:150,unit:'g'},{name:'Mixed peppers',qty:80,unit:'g'},{name:'Tenderstem broccoli',qty:80,unit:'g'},{name:'Soy sauce',qty:15,unit:'ml'},{name:'Rice (dry)',qty:50,unit:'g'}],
+      method:'Stir-fry pork strips 5-6 min. Add veg, cook 4-5 min. Add soy sauce. Serve over rice.'},
+    {id:'egg-breakfast-box',name:'Egg & Bean Breakfast Box',protein:'Eggs',mealTypes:['lunch'],cookStyle:'batch',portability:'reheat',time:10,proteinG:24,fibreG:8,kcal:465,
+      ingredients:[{name:'Eggs',qty:3,unit:'egg'},{name:'Baked beans',qty:150,unit:'g'},{name:'Spinach',qty:40,unit:'g'},{name:'Wholemeal toast',qty:1,unit:'slice'}],
+      method:'Scramble the eggs with spinach. Heat the beans. Serve with toast.'},
+    {id:'tofu-stirfry',name:'Tofu Stir-Fry',protein:'Tofu',mealTypes:['lunch','dinner'],cookStyle:'quick',portability:'reheat',time:15,proteinG:22,fibreG:7,kcal:480,
+      ingredients:[{name:'Firm tofu',qty:180,unit:'g'},{name:'Mixed peppers',qty:80,unit:'g'},{name:'Tenderstem broccoli',qty:80,unit:'g'},{name:'Soy sauce',qty:15,unit:'ml'},{name:'Rice (dry)',qty:50,unit:'g'}],
+      method:'Pan-fry pressed, cubed tofu until golden. Add veg, cook 4-5 min. Add soy sauce. Serve over rice.'},
+    {id:'chicken-tikka-traybake',name:'Chicken Tikka Traybake',protein:'Chicken',mealTypes:['dinner'],cookStyle:'batch',portability:'reheat',time:25,proteinG:34,fibreG:5,kcal:500,
+      ingredients:[{name:'Chicken breast',qty:150,unit:'g'},{name:'Mixed peppers',qty:80,unit:'g'},{name:'Onion',qty:50,unit:'g'},{name:'Tikka spice mix',qty:5,unit:'g'},{name:'Natural yoghurt',qty:30,unit:'g'},{name:'Rice (dry)',qty:50,unit:'g'}],
+      method:'Toss chicken with yoghurt and tikka spice. Roast with peppers and onion at 200C for 20-22 min. Serve over rice.'},
+    {id:'chicken-honey-garlic',name:'Honey Garlic Chicken & Broccoli',protein:'Chicken',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:20,proteinG:30,fibreG:5,kcal:555,
+      ingredients:[{name:'Chicken thigh fillets',qty:150,unit:'g'},{name:'Tenderstem broccoli',qty:100,unit:'g'},{name:'Honey',qty:15,unit:'g'},{name:'Garlic',qty:2,unit:'clove'},{name:'Soy sauce',qty:15,unit:'ml'},{name:'Rice (dry)',qty:50,unit:'g'}],
+      method:'Pan-fry chicken thigh 6-8 min. Add honey, garlic and soy sauce, simmer 2 min to glaze. Steam broccoli. Serve over rice.'},
+    {id:'chicken-noodle-salad',name:'Chicken Noodle Salad Box',protein:'Chicken',mealTypes:['lunch'],cookStyle:'batch',portability:'cold',time:15,proteinG:32,fibreG:5,kcal:545,
+      ingredients:[{name:'Chicken breast',qty:150,unit:'g'},{name:'Egg noodles (dry)',qty:50,unit:'g'},{name:'Carrot',qty:50,unit:'g'},{name:'Cucumber',qty:50,unit:'g'},{name:'Peanut-lime dressing',qty:30,unit:'g'}],
+      method:'Poach or grill chicken, shred once cool. Cook noodles and cool. Combine with julienned carrot, cucumber and dressing. Pack cold.'},
+    {id:'chicken-shawarma-box',name:'Chicken Shawarma Wrap Box',protein:'Chicken',mealTypes:['lunch'],cookStyle:'batch',portability:'cold',time:20,proteinG:30,fibreG:6,kcal:610,
+      ingredients:[{name:'Chicken thigh fillets',qty:150,unit:'g'},{name:'Wholemeal wrap',qty:1,unit:'whole'},{name:'Cucumber',qty:50,unit:'g'},{name:'Tomato',qty:50,unit:'g'},{name:'Hummus',qty:40,unit:'g'},{name:'Shawarma spice mix',qty:5,unit:'g'}],
+      method:'Season chicken with shawarma spice, grill or pan-fry 8 min, slice once cool. Fill the wrap with chicken, hummus, cucumber and tomato. Wrap tightly for lunch.'},
+    {id:'chicken-chorizo-rice',name:'One-Pan Chicken & Chorizo Rice',protein:'Chicken',mealTypes:['dinner'],cookStyle:'batch',portability:'reheat',time:25,proteinG:33,fibreG:5,kcal:665,
+      ingredients:[{name:'Chicken breast',qty:130,unit:'g'},{name:'Chorizo',qty:40,unit:'g'},{name:'Rice (dry)',qty:60,unit:'g'},{name:'Mixed peppers',qty:80,unit:'g'},{name:'Chopped tomatoes',qty:100,unit:'g'}],
+      method:'Brown chicken and chorizo together. Add peppers, rice and chopped tomatoes with a little water, simmer 15-18 min until the rice is cooked.'},
+    {id:'salmon-teriyaki-rice',name:'Teriyaki Salmon & Rice',protein:'Salmon',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:15,proteinG:29,fibreG:4,kcal:530,
+      ingredients:[{name:'Salmon fillet',qty:150,unit:'g'},{name:'Teriyaki sauce',qty:20,unit:'ml'},{name:'Pak choi',qty:100,unit:'g'},{name:'Rice (dry)',qty:50,unit:'g'}],
+      method:'Pan-sear salmon, glazing with teriyaki sauce in the last 2 min. Steam pak choi. Serve over rice.'},
+    {id:'salmon-nicoise-box',name:'Salmon Niçoise-Style Box',protein:'Salmon',mealTypes:['lunch'],cookStyle:'batch',portability:'cold',time:20,proteinG:32,fibreG:6,kcal:590,
+      ingredients:[{name:'Salmon fillet',qty:130,unit:'g'},{name:'New potatoes',qty:150,unit:'g'},{name:'Eggs',qty:1,unit:'egg'},{name:'Green beans',qty:60,unit:'g'},{name:'Olives',qty:20,unit:'g'},{name:'Mustard vinaigrette',qty:20,unit:'ml'}],
+      method:'Bake salmon, boil potatoes and egg, steam green beans. Cool everything, combine with olives and vinaigrette. Pack cold.'},
+    {id:'salmon-med-veg-traybake',name:'Salmon & Mediterranean Veg Traybake',protein:'Salmon',mealTypes:['dinner'],cookStyle:'batch',portability:'reheat',time:20,proteinG:30,fibreG:5,kcal:450,
+      ingredients:[{name:'Salmon fillet',qty:150,unit:'g'},{name:'Courgette',qty:80,unit:'g'},{name:'Mixed peppers',qty:80,unit:'g'},{name:'Cherry tomatoes',qty:60,unit:'g'},{name:'Olive oil',qty:10,unit:'ml'}],
+      method:'Roast salmon and vegetables together at 200C for 18-20 min with olive oil and herbs.'},
+    {id:'salmon-bagel-box',name:'Smoked Salmon & Cottage Cheese Bagel',protein:'Salmon',mealTypes:['lunch'],cookStyle:'quick',portability:'cold',time:5,proteinG:26,fibreG:3,kcal:460,
+      ingredients:[{name:'Smoked salmon',qty:100,unit:'g'},{name:'Wholemeal bagel',qty:1,unit:'whole'},{name:'Cottage cheese',qty:60,unit:'g'},{name:'Cucumber',qty:40,unit:'g'},{name:'Dill',qty:2,unit:'g'}],
+      method:'Split and toast the bagel if you like. Spread with cottage cheese, top with smoked salmon, cucumber and dill.'},
+    {id:'salmon-lentil-salad',name:'Salmon & Lentil Salad Box',protein:'Salmon',mealTypes:['lunch'],cookStyle:'batch',portability:'cold',time:20,proteinG:30,fibreG:9,kcal:400,
+      ingredients:[{name:'Salmon fillet',qty:130,unit:'g'},{name:'Puy lentils',qty:100,unit:'g'},{name:'Spinach',qty:50,unit:'g'},{name:'Cherry tomatoes',qty:50,unit:'g'},{name:'Lemon',qty:0.25,unit:'whole'}],
+      method:'Bake salmon, flake once cool. Combine with cooked puy lentils, spinach and cherry tomatoes, dress with lemon.'},
+    {id:'lamb-kofta-couscous',name:'Lamb Kofta with Couscous & Salad',protein:'Lamb',mealTypes:['lunch','dinner'],cookStyle:'batch',portability:'reheat',time:20,proteinG:29,fibreG:5,kcal:565,
+      ingredients:[{name:'Lamb mince',qty:130,unit:'g'},{name:'Couscous (dry)',qty:50,unit:'g'},{name:'Cucumber',qty:50,unit:'g'},{name:'Tomato',qty:50,unit:'g'},{name:'Mint yoghurt',qty:30,unit:'g'},{name:'Cumin & spice mix',qty:3,unit:'g'}],
+      method:'Mix lamb mince with spices, shape into koftas, pan-fry 8-10 min. Soak couscous in boiling water 5 min. Serve koftas over couscous with cucumber, tomato and mint yoghurt.'},
+    {id:'lamb-moroccan-stew',name:'Moroccan Lamb & Chickpea Stew',protein:'Lamb',mealTypes:['dinner'],cookStyle:'batch',portability:'reheat',time:30,proteinG:31,fibreG:9,kcal:670,
+      ingredients:[{name:'Lamb, diced',qty:130,unit:'g'},{name:'Chickpeas',qty:100,unit:'g'},{name:'Chopped tomatoes',qty:150,unit:'g'},{name:'Onion',qty:50,unit:'g'},{name:'Moroccan spice mix',qty:5,unit:'g'},{name:'Couscous (dry)',qty:40,unit:'g'}],
+      method:'Brown lamb with onion and spices. Add chopped tomatoes and chickpeas, simmer 20 min. Serve over couscous.'},
+    {id:'lamb-steak-mash',name:'Lamb Steak with Sweet Potato Mash & Greens',protein:'Lamb',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:20,proteinG:30,fibreG:6,kcal:530,
+      ingredients:[{name:'Lamb leg steak',qty:150,unit:'g'},{name:'Sweet potato',qty:200,unit:'g'},{name:'Kale',qty:60,unit:'g'}],
+      method:'Pan-fry lamb steak 3-4 min per side, then rest. Boil and mash the sweet potato. Steam or wilt the kale.'},
+    {id:'lamb-feta-salad-box',name:'Lamb & Feta Salad Box',protein:'Lamb',mealTypes:['lunch'],cookStyle:'batch',portability:'cold',time:15,proteinG:29,fibreG:5,kcal:605,
+      ingredients:[{name:'Lamb, cooked & sliced',qty:130,unit:'g'},{name:'Feta',qty:30,unit:'g'},{name:'Cucumber',qty:50,unit:'g'},{name:'Tomato',qty:50,unit:'g'},{name:'Olives',qty:20,unit:'g'},{name:'Wholemeal pitta',qty:1,unit:'whole'}],
+      method:'Grill or pan-fry lamb, slice once cool. Combine with feta, cucumber, tomato and olives, pitta on the side. Pack cold.'},
+    {id:'duck-noodle-stirfry',name:'Duck & Noodle Stir-Fry',protein:'Duck',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:20,proteinG:30,fibreG:4,kcal:580,
+      ingredients:[{name:'Duck breast',qty:150,unit:'g'},{name:'Egg noodles (dry)',qty:50,unit:'g'},{name:'Pak choi',qty:100,unit:'g'},{name:'Hoisin sauce',qty:20,unit:'g'}],
+      method:'Score and pan-fry duck skin-down 6 min, flip 3 min, then slice. Cook noodles. Stir-fry pak choi, toss with noodles, duck and hoisin sauce.'},
+    {id:'duck-orange-beetroot-box',name:'Duck, Orange & Beetroot Salad Box',protein:'Duck',mealTypes:['lunch'],cookStyle:'batch',portability:'cold',time:15,proteinG:28,fibreG:5,kcal:400,
+      ingredients:[{name:'Duck breast, cooked & sliced',qty:130,unit:'g'},{name:'Beetroot, cooked',qty:1,unit:'whole'},{name:'Orange',qty:0.5,unit:'whole'},{name:'Rocket',qty:40,unit:'g'},{name:'Balsamic dressing',qty:15,unit:'ml'}],
+      method:'Pan-fry duck breast, rest, then slice thinly once cool. Combine with beetroot, orange segments and rocket, dress with balsamic. Pack cold.'},
+    {id:'beef-meatballs-pasta',name:'Beef Meatballs with Tomato Pasta',protein:'Beef',mealTypes:['dinner'],cookStyle:'batch',portability:'reheat',time:25,proteinG:30,fibreG:6,kcal:580,
+      ingredients:[{name:'Beef mince',qty:130,unit:'g'},{name:'Wholewheat pasta (dry)',qty:60,unit:'g'},{name:'Tomato passata',qty:150,unit:'g'},{name:'Garlic',qty:1,unit:'clove'}],
+      method:'Shape mince into meatballs, brown 6-8 min. Add passata and garlic, simmer 10 min. Cook pasta and combine.'},
+    {id:'turkey-chilli-box',name:'Turkey Chilli Box',protein:'Turkey',mealTypes:['lunch','dinner'],cookStyle:'batch',portability:'reheat',time:20,proteinG:29,fibreG:9,kcal:550,
+      ingredients:[{name:'Turkey mince',qty:130,unit:'g'},{name:'Kidney beans',qty:100,unit:'g'},{name:'Chopped tomatoes',qty:150,unit:'g'},{name:'Onion',qty:50,unit:'g'},{name:'Rice (dry)',qty:50,unit:'g'}],
+      method:'Brown turkey mince with onion. Add tomatoes, beans and chilli spice, simmer 12-15 min. Serve over rice.'},
+    {id:'tofu-tikka-traybake',name:'Tofu Tikka Traybake',protein:'Tofu',mealTypes:['dinner'],cookStyle:'batch',portability:'reheat',time:25,proteinG:20,fibreG:6,kcal:515,
+      ingredients:[{name:'Firm tofu',qty:180,unit:'g'},{name:'Mixed peppers',qty:80,unit:'g'},{name:'Onion',qty:50,unit:'g'},{name:'Tikka spice mix',qty:5,unit:'g'},{name:'Natural yoghurt',qty:30,unit:'g'},{name:'Rice (dry)',qty:50,unit:'g'}],
+      method:'Press and cube the tofu, toss with yoghurt and tikka spice. Roast with peppers and onion at 200C for 20-22 min. Serve over rice.'},
+    {id:'tofu-noodle-salad',name:'Tofu Noodle Salad Box',protein:'Tofu',mealTypes:['lunch'],cookStyle:'batch',portability:'cold',time:15,proteinG:20,fibreG:6,kcal:530,
+      ingredients:[{name:'Firm tofu',qty:160,unit:'g'},{name:'Egg noodles (dry)',qty:50,unit:'g'},{name:'Carrot',qty:50,unit:'g'},{name:'Cucumber',qty:50,unit:'g'},{name:'Peanut-lime dressing',qty:30,unit:'g'}],
+      method:'Bake or pan-fry pressed tofu until golden, then cool. Cook noodles and cool. Combine with julienned carrot, cucumber and dressing. Pack cold.'},
+    {id:'tofu-chilli-box',name:'Tofu & Bean Chilli Box',protein:'Tofu',mealTypes:['lunch','dinner'],cookStyle:'batch',portability:'reheat',time:20,proteinG:22,fibreG:10,kcal:580,
+      ingredients:[{name:'Firm tofu, crumbled',qty:160,unit:'g'},{name:'Kidney beans',qty:100,unit:'g'},{name:'Chopped tomatoes',qty:150,unit:'g'},{name:'Onion',qty:50,unit:'g'},{name:'Rice (dry)',qty:50,unit:'g'}],
+      method:'Crumble and pan-fry the tofu. Add onion, tomatoes, beans and chilli spice, simmer 12-15 min. Serve over rice.'},
+    {id:'paneer-tikka-traybake',name:'Paneer Tikka Traybake',protein:'Paneer',mealTypes:['dinner'],cookStyle:'batch',portability:'reheat',time:20,proteinG:24,fibreG:5,kcal:655,
+      ingredients:[{name:'Paneer',qty:150,unit:'g'},{name:'Mixed peppers',qty:80,unit:'g'},{name:'Onion',qty:50,unit:'g'},{name:'Tikka spice mix',qty:5,unit:'g'},{name:'Natural yoghurt',qty:30,unit:'g'},{name:'Rice (dry)',qty:50,unit:'g'}],
+      method:'Cube the paneer and toss with yoghurt and tikka spice. Roast with peppers and onion at 200C for 15-18 min. Serve over rice.'},
+    {id:'paneer-saag',name:'Saag Paneer with Rice',protein:'Paneer',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:20,proteinG:22,fibreG:6,kcal:585,
+      ingredients:[{name:'Paneer',qty:130,unit:'g'},{name:'Spinach',qty:150,unit:'g'},{name:'Onion',qty:50,unit:'g'},{name:'Garlic',qty:1,unit:'clove'},{name:'Fresh ginger',qty:5,unit:'g'},{name:'Rice (dry)',qty:50,unit:'g'}],
+      method:'Pan-fry paneer cubes until golden, set aside. Cook onion, garlic and ginger, add spinach and wilt down, mash roughly. Stir the paneer back through. Serve over rice.'},
+    {id:'paneer-salad-box',name:'Paneer & Chickpea Salad Box',protein:'Paneer',mealTypes:['lunch'],cookStyle:'batch',portability:'cold',time:15,proteinG:23,fibreG:9,kcal:600,
+      ingredients:[{name:'Paneer',qty:130,unit:'g'},{name:'Chickpeas',qty:100,unit:'g'},{name:'Cucumber',qty:50,unit:'g'},{name:'Tomato',qty:50,unit:'g'},{name:'Lemon dressing',qty:20,unit:'g'}],
+      method:'Pan-fry paneer cubes until golden, then cool. Combine with chickpeas, cucumber, tomato and a lemon dressing. Pack cold.'}
+  ];
+
+  var CATEGORY_RULES = [
+    ['green bean','Fresh produce'],['baked bean','Pantry & dry goods'],['mixed bean','Pantry & dry goods'],
+    ['black bean','Pantry & dry goods'],['kidney bean','Pantry & dry goods'],['chickpea','Pantry & dry goods'],['bean','Pantry & dry goods'],
+    ['chicken','Meat & fish'],['salmon','Meat & fish'],['lamb','Meat & fish'],['tuna','Meat & fish'],['beef','Meat & fish'],
+    ['duck','Meat & fish'],['pork','Meat & fish'],['bacon','Meat & fish'],['tofu','Meat & fish'],['paneer','Meat & fish'],['chorizo','Meat & fish'],
+    ['egg noodle','Pantry & dry goods'],['egg','Protein'],['cottage cheese','Dairy & chilled'],['feta','Dairy & chilled'],['yoghurt','Dairy & chilled'],['butter','Dairy & chilled'],['cheese','Dairy & chilled'],
+    ['sweet potato','Fresh produce'],['potato','Fresh produce'],['pepper','Fresh produce'],['broccoli','Fresh produce'],
+    ['onion','Fresh produce'],['garlic','Fresh produce'],['ginger','Fresh produce'],['lemon','Fresh produce'],['lime','Fresh produce'],
+    ['avocado','Fresh produce'],['tomato passata','Pantry & dry goods'],['chopped tomato','Pantry & dry goods'],['tomato','Fresh produce'],['cucumber','Fresh produce'],['courgette','Fresh produce'],
+    ['carrot','Fresh produce'],['spinach','Fresh produce'],['romaine','Fresh produce'],['lettuce','Fresh produce'],
+    ['pak choi','Fresh produce'],['kale','Fresh produce'],['beetroot','Fresh produce'],['orange','Fresh produce'],
+    ['rocket','Fresh produce'],['dill','Fresh produce'],
+    ['rice','Pantry & dry goods'],['quinoa','Pantry & dry goods'],['couscous','Pantry & dry goods'],['lentil','Pantry & dry goods'],
+    ['noodle','Pantry & dry goods'],['pasta','Pantry & dry goods'],['wrap','Pantry & dry goods'],['bagel','Pantry & dry goods'],['pitta','Pantry & dry goods'],
+    ['dressing','Pantry & dry goods'],['vinaigrette','Pantry & dry goods'],['passata','Pantry & dry goods'],['hummus','Pantry & dry goods'],['olives','Pantry & dry goods'],
+    ['honey','Pantry & dry goods'],['spice','Pantry & dry goods'],
+    ['sauce','Pantry & dry goods'],['seasoning','Pantry & dry goods'],['toast','Pantry & dry goods'],['bread','Pantry & dry goods'],
+    ['oil','Pantry & dry goods'],['frozen pea','Frozen'],['pea','Frozen']
+  ];
+  var CATEGORY_ORDER = ['Meat & fish','Protein','Fresh produce','Dairy & chilled','Pantry & dry goods','Frozen','Other'];
+
+  function categorize(name){
+    var lower = name.toLowerCase();
+    for (var i=0;i<CATEGORY_RULES.length;i++){
+      if (lower.indexOf(CATEGORY_RULES[i][0]) !== -1) return CATEGORY_RULES[i][1];
+    }
+    return 'Other';
+  }
+
+  function shuffle(arr){
+    var a = arr.slice();
+    for (var i=a.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t=a[i]; a[i]=a[j]; a[j]=t;
+    }
+    return a;
+  }
+
+  function formatQty(unit, qty){
+    var whole = ['tin','whole','chop','clove','egg','rasher','slice'];
+    if (whole.indexOf(unit) !== -1) return Math.ceil(qty - 1e-9);
+    var rounded = Math.round(qty/5)*5;
+    if (rounded === 0) rounded = Math.ceil(qty);
+    return rounded;
+  }
+
+  var chipLabels = document.querySelectorAll('#proteinChips .chip');
+  chipLabels.forEach(function(label){
+    var input = label.querySelector('input');
+    input.addEventListener('change', function(){ label.classList.toggle('active', input.checked); });
+  });
+
+  var macroSplitEl = document.getElementById('macroSplit');
+  var macroCustomField = document.getElementById('macroCustomField');
+  function syncMacroCustom(){ macroCustomField.hidden = (macroSplitEl.value !== 'Custom'); }
+  macroSplitEl.addEventListener('change', syncMacroCustom);
+  syncMacroCustom();
+
+  var lastPlan = null;
+
+  function val(id){ var el=document.getElementById(id); return el ? el.value.trim() : ''; }
+
+  function buildSlots(days, mealsPerDay){
+    var slots = [];
+    for (var d=1; d<=days; d++){
+      for (var m=0; m<mealsPerDay; m++){
+        var type = (m % 2 === 0) ? 'lunch' : 'dinner';
+        var label = mealsPerDay === 1 ? 'Meal' : (type === 'lunch' ? 'Lunch' : 'Dinner');
+        if (mealsPerDay > 2) label = label + ' ' + (Math.floor(m/2)+1);
+        slots.push({day:d, type:type, label:label});
+      }
+    }
+    return slots;
+  }
+
+  function filterPool(opts){
+    return RECIPES.filter(function(r){
+      if (opts.proteins.length && opts.proteins.indexOf(r.protein) === -1) return false;
+      if (opts.maxTime && r.time > opts.maxTime) return false;
+      if (opts.exclusions.length){
+        var hit = r.ingredients.some(function(ing){
+          return opts.exclusions.some(function(ex){ return ing.name.toLowerCase().indexOf(ex) !== -1; });
+        });
+        if (hit) return false;
+      }
+      return true;
+    });
+  }
+
+  function scoreRecipe(r, opts, type){
+    var score = 0;
+    if (opts.cookStyle !== 'any' && r.cookStyle === opts.cookStyle) score += 2;
+    if (type === 'lunch' && opts.lunchStyle === 'cold' && r.portability === 'cold') score += 2;
+    if (opts.proteinTarget && r.proteinG >= opts.proteinTarget - 5) score += 1;
+    if (opts.fibrePerMeal && r.fibreG >= opts.fibrePerMeal - 2) score += 1;
+    return score;
+  }
+
+  function generatePlan(){
+    var mealsPerDay = parseInt(val('mealsPerDay'),10) || 1;
+    var fibreTarget = parseInt(val('fibreTarget'),10) || 0;
+    var macroSplitRaw = val('macroSplit');
+    var macroSplit = (macroSplitRaw === 'Custom') ? (val('macroCustom') || 'Custom (not specified)') : macroSplitRaw;
+
+    var opts = {
+      days: parseInt(val('days'),10) || 1,
+      mealsPerDay: mealsPerDay,
+      maxTime: parseInt(val('maxTime'),10) || 0,
+      proteinTarget: parseInt(val('proteinTarget'),10) || 0,
+      fibreTarget: fibreTarget,
+      fibrePerMeal: fibreTarget ? fibreTarget / mealsPerDay : 0,
+      macroSplit: macroSplit,
+      store: val('store'),
+      budget: val('budget'),
+      cookStyle: document.querySelector('input[name="cookStyle"]:checked').value,
+      lunchStyle: document.querySelector('input[name="lunchStyle"]:checked').value,
+      proteins: Array.prototype.slice.call(chipLabels).filter(function(l){ return l.querySelector('input').checked; }).map(function(l){ return l.querySelector('input').value; }),
+      exclusions: val('exclusions').split(',').map(function(s){ return s.trim().toLowerCase(); }).filter(Boolean)
+    };
+
+    var pool = filterPool(opts);
+    if (!pool.length) pool = RECIPES.slice();
+
+    var lunchSlots = [], dinnerSlots = [];
+    var slots = buildSlots(opts.days, opts.mealsPerDay);
+    slots.forEach(function(s){ (s.type === 'lunch' ? lunchSlots : dinnerSlots).push(s); });
+
+    function assign(slotList, type){
+      if (!slotList.length) return;
+      var base = pool.filter(function(r){ return r.mealTypes.indexOf(type) !== -1; });
+      if (!base.length) base = pool.slice();
+
+      var scored = base.map(function(r){ return {r:r, score:scoreRecipe(r, opts, type)}; });
+      scored.sort(function(a,b){ return b.score - a.score; });
+
+      var chosen = [];
+      var chosenIds = {};
+      if (opts.proteins.length){
+        // guarantee every selected protein appears at least once, highest-scoring recipe first
+        opts.proteins.forEach(function(p){
+          var matches = scored.filter(function(s){ return s.r.protein === p; });
+          if (matches.length){ chosen.push(matches[0].r); chosenIds[matches[0].r.id] = true; }
+        });
+      }
+      var desiredCount = Math.max(chosen.length, Math.min(base.length, Math.ceil(slotList.length/3)));
+      for (var i=0; i<scored.length && chosen.length < desiredCount; i++){
+        if (!chosenIds[scored[i].r.id]){ chosen.push(scored[i].r); chosenIds[scored[i].r.id] = true; }
+      }
+      if (!chosen.length) chosen = [scored[0].r];
+
+      chosen = shuffle(chosen);
+      slotList.forEach(function(slot, i){ slot.recipe = chosen[i % chosen.length]; });
+    }
+    assign(lunchSlots, 'lunch');
+    assign(dinnerSlots, 'dinner');
+
+    return {opts:opts, slots:slots};
+  }
+
+  function renderPlan(plan){
+    var summaryBits = [];
+    if (plan.opts.store) summaryBits.push('Store: ' + plan.opts.store);
+    if (plan.opts.budget) summaryBits.push('Budget: ' + plan.opts.budget + ' (reminder only — not price-calculated)');
+    if (plan.opts.macroSplit && plan.opts.macroSplit !== 'No preference') summaryBits.push('Macro split: ' + plan.opts.macroSplit);
+    if (plan.opts.fibreTarget) summaryBits.push('Fibre target: ~' + plan.opts.fibreTarget + 'g/day');
+    document.getElementById('planSummary').textContent = summaryBits.join(' · ');
+
+    var table = document.getElementById('planTable');
+    var mealsPerDay = plan.opts.mealsPerDay;
+    var byDay = {};
+    plan.slots.forEach(function(s){ (byDay[s.day] = byDay[s.day] || []).push(s); });
+
+    var labels = [];
+    plan.slots.forEach(function(s){ if (labels.indexOf(s.label) === -1) labels.push(s.label); });
+
+    var html = '<thead><tr><th>Day</th>' + labels.map(function(l){ return '<th>'+l+'</th>'; }).join('') + '</tr></thead><tbody>';
+    Object.keys(byDay).forEach(function(day){
+      html += '<tr><td>Day '+day+'</td>';
+      var bySlotLabel = {};
+      byDay[day].forEach(function(s){ bySlotLabel[s.label] = s.recipe.name; });
+      labels.forEach(function(l){ html += '<td>'+(bySlotLabel[l] || '—')+'</td>'; });
+      html += '</tr>';
+    });
+    html += '</tbody>';
+    table.innerHTML = html;
+
+    var counts = {};
+    plan.slots.forEach(function(s){ counts[s.recipe.id] = (counts[s.recipe.id]||0)+1; });
+    var distinctRecipes = [];
+    var seen = {};
+    plan.slots.forEach(function(s){ if(!seen[s.recipe.id]){ seen[s.recipe.id]=true; distinctRecipes.push(s.recipe); } });
+
+    var recipeListEl = document.getElementById('recipeList');
+    recipeListEl.innerHTML = distinctRecipes.map(function(r){
+      var portions = counts[r.id];
+      var ingLines = r.ingredients.map(function(ing){
+        var total = formatQty(ing.unit, ing.qty * portions);
+        var unitLabel = (ing.unit==='g'||ing.unit==='ml') ? ing.unit : (ing.unit==='whole' ? '' : (' '+ing.unit+(total===1?'':'s')));
+        return '<li>'+ing.name+' — '+total+unitLabel+'</li>';
+      }).join('');
+      return '<div class="recipe">'+
+        '<div class="recipe-head"><h3>'+r.name+'</h3><span class="meta">'+r.time+' min · ~'+r.proteinG+'g protein · ~'+r.fibreG+'g fibre · ~'+r.kcal+' kcal/portion</span></div>'+
+        '<div><span class="tag">'+r.protein+'</span><span class="tag">'+(r.cookStyle==='batch'?'batch-friendly':'quick-fresh')+'</span><span class="tag">'+(r.portability==='cold'?'lunchbox-cold':'reheats well')+'</span><span class="tag">×'+portions+' portion'+(portions===1?'':'s')+'</span></div>'+
+        '<ul>'+ingLines+'</ul>'+
+        '<p class="method">'+r.method+'</p>'+
+      '</div>';
+    }).join('');
+
+    var totals = {};
+    plan.slots.forEach(function(s){
+      s.recipe.ingredients.forEach(function(ing){
+        var key = ing.name + '|' + ing.unit;
+        totals[key] = (totals[key] || 0) + ing.qty;
+      });
+    });
+    var grouped = {};
+    Object.keys(totals).forEach(function(key){
+      var parts = key.split('|');
+      var name = parts[0], unit = parts[1];
+      var cat = categorize(name);
+      grouped[cat] = grouped[cat] || [];
+      grouped[cat].push({name:name, unit:unit, qty: formatQty(unit, totals[key])});
+    });
+    var shopEl = document.getElementById('shopList');
+    shopEl.innerHTML = CATEGORY_ORDER.filter(function(c){ return grouped[c]; }).map(function(cat){
+      var items = grouped[cat].map(function(it){
+        var unitLabel = (it.unit==='g'||it.unit==='ml') ? it.unit : (it.unit==='whole' ? '' : (' '+it.unit + (it.qty===1?'':'s')));
+        return '<li>'+it.name+' — '+it.qty+unitLabel+'</li>';
+      }).join('');
+      return '<div class="shop-group"><h4>'+cat+'</h4><ul>'+items+'</ul></div>';
+    }).join('');
+
+    lastPlan = {plan:plan, distinctRecipes:distinctRecipes, counts:counts, grouped:grouped};
+  }
+
+  function planAsText(){
+    if (!lastPlan) return '';
+    var lines = ['MEAL PLAN', ''];
+    var opts = lastPlan.plan.opts;
+    if (opts.store) lines.push('Store: ' + opts.store);
+    if (opts.budget) lines.push('Budget: ' + opts.budget + ' (reminder only — not price-calculated)');
+    if (opts.macroSplit && opts.macroSplit !== 'No preference') lines.push('Macro split: ' + opts.macroSplit);
+    if (opts.fibreTarget) lines.push('Fibre target: ~' + opts.fibreTarget + 'g/day');
+    lines.push('');
+    var byDay = {};
+    lastPlan.plan.slots.forEach(function(s){ (byDay[s.day]=byDay[s.day]||[]).push(s); });
+    Object.keys(byDay).forEach(function(day){
+      lines.push('Day '+day+':');
+      byDay[day].forEach(function(s){ lines.push('  '+s.label+': '+s.recipe.name); });
+    });
+    lines.push('', 'RECIPES', '');
+    lastPlan.distinctRecipes.forEach(function(r){
+      var portions = lastPlan.counts[r.id];
+      lines.push(r.name + ' (x'+portions+' portions, '+r.time+' min, ~'+r.proteinG+'g protein · ~'+r.fibreG+'g fibre · ~'+r.kcal+' kcal/portion)');
+      r.ingredients.forEach(function(ing){
+        var total = formatQty(ing.unit, ing.qty*portions);
+        lines.push('  - '+ing.name+': '+total+ing.unit);
+      });
+      lines.push('  Method: '+r.method, '');
+    });
+    lines.push('SHOPPING LIST', '');
+    CATEGORY_ORDER.filter(function(c){ return lastPlan.grouped[c]; }).forEach(function(cat){
+      lines.push(cat+':');
+      lastPlan.grouped[cat].forEach(function(it){ lines.push('  - '+it.name+': '+it.qty+it.unit); });
+    });
+    return lines.join('\n');
+  }
+
+  document.getElementById('reqForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var plan = generatePlan();
+    renderPlan(plan);
+    document.getElementById('results').classList.add('show');
+    document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
+    try {
+      localStorage.setItem('mealPlannerLastInputs', JSON.stringify({
+        days: val('days'), mealsPerDay: val('mealsPerDay'), maxTime: val('maxTime'), proteinTarget: val('proteinTarget'),
+        fibreTarget: val('fibreTarget'), macroSplit: val('macroSplit'), macroCustom: val('macroCustom'),
+        store: val('store'), budget: val('budget'),
+        proteins: plan.opts.proteins, cookStyle: plan.opts.cookStyle, lunchStyle: plan.opts.lunchStyle, exclusions: val('exclusions')
+      }));
+    } catch(e){}
+  });
+
+  document.getElementById('regenBtn').addEventListener('click', function(){
+    var plan = generatePlan();
+    renderPlan(plan);
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    var text = planAsText();
+    var msg = document.getElementById('copyMsg');
+    function flash(){ msg.classList.add('show'); setTimeout(function(){ msg.classList.remove('show'); }, 1600); }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(flash).catch(function(){
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.id='planOutput'; document.body.appendChild(ta); ta.select();
+        try{ document.execCommand('copy'); }catch(e){}
+        document.body.removeChild(ta); flash();
+      });
+    }
+  });
+
+  try {
+    var saved = JSON.parse(localStorage.getItem('mealPlannerLastInputs') || 'null');
+    if (saved){
+      if (saved.days) document.getElementById('days').value = saved.days;
+      if (saved.mealsPerDay) document.getElementById('mealsPerDay').value = saved.mealsPerDay;
+      if (saved.maxTime) document.getElementById('maxTime').value = saved.maxTime;
+      if (saved.proteinTarget) document.getElementById('proteinTarget').value = saved.proteinTarget;
+      if (saved.fibreTarget) document.getElementById('fibreTarget').value = saved.fibreTarget;
+      if (saved.macroSplit) document.getElementById('macroSplit').value = saved.macroSplit;
+      if (saved.macroCustom) document.getElementById('macroCustom').value = saved.macroCustom;
+      if (saved.store) document.getElementById('store').value = saved.store;
+      if (saved.budget) document.getElementById('budget').value = saved.budget;
+      syncMacroCustom();
+      if (saved.exclusions) document.getElementById('exclusions').value = saved.exclusions;
+      if (saved.proteins && saved.proteins.length){
+        chipLabels.forEach(function(label){
+          var input = label.querySelector('input');
+          if (saved.proteins.indexOf(input.value) !== -1){ input.checked = true; label.classList.add('active'); }
+        });
+      }
+      if (saved.cookStyle){
+        var r = document.querySelector('input[name="cookStyle"][value="'+saved.cookStyle+'"]');
+        if (r) r.checked = true;
+      }
+      if (saved.lunchStyle){
+        var r2 = document.querySelector('input[name="lunchStyle"][value="'+saved.lunchStyle+'"]');
+        if (r2) r2.checked = true;
+      }
+    }
+  } catch(e){}
+})();
+</script>
