@@ -120,7 +120,7 @@
       <div class="row">
         <div class="field"><label for="days">Days</label><input type="number" id="days" min="1" max="14" value="5"></div>
         <div class="field"><label for="mealsPerDay">Meals / day</label><input type="number" id="mealsPerDay" min="1" max="4" value="2"></div>
-        <div class="field"><label for="maxTime">Max cook time <span class="sub">(min)</span></label><input type="number" id="maxTime" min="0" max="180" value="30"></div>
+        <div class="field"><label for="maxTime">Max cook time <span class="sub">(min)</span></label><input type="number" id="maxTime" min="0" max="180" value="60"></div>
       </div>
     </div>
 
@@ -139,6 +139,7 @@
         <label class="chip"><input type="checkbox" value="Eggs">Eggs</label>
         <label class="chip"><input type="checkbox" value="Tofu">Tofu</label>
         <label class="chip"><input type="checkbox" value="Paneer">Paneer</label>
+        <label class="chip"><input type="checkbox" value="Beans">Beans</label>
       </div>
     </div>
 
@@ -367,10 +368,44 @@
       method:'Pan-fry paneer cubes until golden, set aside. Cook onion, garlic and ginger, add spinach and wilt down, mash roughly. Stir the paneer back through. Serve over rice.'},
     {id:'paneer-salad-box',name:'Paneer & Chickpea Salad Box',protein:'Paneer',mealTypes:['lunch'],cookStyle:'batch',portability:'cold',time:15,proteinG:23,fibreG:9,kcal:600,
       ingredients:[{name:'Paneer',qty:130,unit:'g'},{name:'Chickpeas',qty:100,unit:'g'},{name:'Cucumber',qty:50,unit:'g'},{name:'Tomato',qty:50,unit:'g'},{name:'Lemon dressing',qty:20,unit:'g'}],
-      method:'Pan-fry paneer cubes until golden, then cool. Combine with chickpeas, cucumber, tomato and a lemon dressing. Pack cold.'}
+      method:'Pan-fry paneer cubes until golden, then cool. Combine with chickpeas, cucumber, tomato and a lemon dressing. Pack cold.'},
+
+    // ---- Vegetarian batch 1: beans, tofu and paneer (one pot / oven / air fryer) ----
+    // Quantities are per portion. proteinG / fibreG / kcal are rough estimates (shown with ~ in the UI).
+    {id:'pinto-beans-rice',name:'One-Pot Pinto Beans & Rice',protein:'Beans',mealTypes:['lunch','dinner'],cookStyle:'batch',portability:'reheat',time:30,proteinG:8,fibreG:5,kcal:250,
+      ingredients:[{name:'Pinto beans',qty:80,unit:'g'},{name:'Rice (dry)',qty:30,unit:'g'},{name:'Onion',qty:25,unit:'g'},{name:'Garlic',qty:0.65,unit:'clove'},{name:'Tomato puree',qty:3,unit:'g'},{name:'Chilli & oregano spice mix',qty:1,unit:'g'},{name:'Vegetable stock',qty:80,unit:'ml'},{name:'Olive oil',qty:5,unit:'ml'},{name:'Lime',qty:0.1,unit:'whole'}],
+      method:'Total about 30 min (5 prep, 25 cook), one pot, makes 6 portions. Soften the onion in the oil 3-4 min. Stir in garlic, tomato puree, chilli powder and oregano for 1 min. Add stock and bring to a rapid boil, then stir in beans, rice and salt. Cover and simmer gently 15-18 min until the rice is just tender. Rest covered 5 min, add lime juice and fluff with a fork.'},
+    {id:'black-bean-rice-pot',name:'Black Bean & Rice Pot',protein:'Beans',mealTypes:['lunch','dinner'],cookStyle:'batch',portability:'reheat',time:30,proteinG:8,fibreG:5,kcal:290,
+      ingredients:[{name:'Black beans',qty:60,unit:'g'},{name:'Rice (dry)',qty:45,unit:'g'},{name:'Onion',qty:35,unit:'g'},{name:'Jalapeno',qty:5,unit:'g'},{name:'Garlic',qty:0.7,unit:'clove'},{name:'Ground cumin spice',qty:1,unit:'g'},{name:'Vegetable stock',qty:120,unit:'ml'},{name:'Olive oil',qty:5,unit:'ml'},{name:'Fresh coriander',qty:3,unit:'g'},{name:'Lime',qty:0.25,unit:'whole'}],
+      method:'Total about 30 min, one pot. Soften the onion in the oil 5-6 min without browning. Add jalapeno 1-2 min, then garlic and cumin 1 min. Stir in the rice to coat. Add stock, salt and black beans, cover and bring to a gentle boil, then simmer on the lowest heat 15-20 min without stirring. Rest a few minutes, fluff, and top with coriander and lime. The source gave no portion count, so quantities here assume 4 portions.'},
+    {id:'beans-and-potatoes',name:'One-Pot Beans & Potatoes',protein:'Beans',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:30,proteinG:9,fibreG:9,kcal:330,
+      ingredients:[{name:'Black beans',qty:60,unit:'g'},{name:'Potatoes',qty:150,unit:'g'},{name:'Frozen green beans',qty:40,unit:'g'},{name:'Onion',qty:40,unit:'g'},{name:'Garlic',qty:0.95,unit:'clove'},{name:'Fresh ginger',qty:3,unit:'g'},{name:'Coriander, turmeric & paprika spice mix',qty:3,unit:'g'},{name:'Olive oil',qty:15,unit:'ml'}],
+      method:'Total about 30 min (5 prep, 25 cook), one pot, makes 4 portions. Cook finely chopped onion, garlic and ginger in the oil on medium heat about 10 min, stirring often. Add very small diced potato and the spices. Add a splash of water, cover and cook about 10 min until tender (a little more water and 3-5 min if needed). Stir in the frozen green beans and black beans, cover and cook 3-5 min until the green beans are hot. Season with salt and pepper.'},
+    {id:'chickpea-veg-traybake',name:'Chickpea & Veg Tray Bake',protein:'Beans',mealTypes:['lunch','dinner'],cookStyle:'batch',portability:'reheat',time:40,proteinG:11,fibreG:11,kcal:400,
+      ingredients:[{name:'Chickpeas',qty:80,unit:'g'},{name:'Potatoes',qty:150,unit:'g'},{name:'Onion',qty:100,unit:'g'},{name:'Mixed peppers',qty:100,unit:'g'},{name:'Cherry tomatoes',qty:75,unit:'g'},{name:'Indian spice mix',qty:2,unit:'g'},{name:'Olive oil',qty:12,unit:'ml'}],
+      method:'Total about 40 min (10 prep, 30 cook), makes 3 portions. Heat oven to 200C. Toss potatoes, onion wedges, cherry tomatoes, peppers and chickpeas in a large roasting tray with oil, spice mix and salt. Roast 20 min, stir, then roast 10 min more, watching so nothing burns.'},
+    {id:'white-bean-tomato-bake',name:'Roasted White Bean & Tomato Bake with Sourdough',protein:'Beans',mealTypes:['lunch','dinner'],cookStyle:'quick',portability:'reheat',time:35,proteinG:16,fibreG:12,kcal:640,
+      ingredients:[{name:'Cannellini beans',qty:120,unit:'g'},{name:'Cherry tomatoes',qty:230,unit:'g'},{name:'Garlic',qty:2.95,unit:'clove'},{name:'Olive oil',qty:37,unit:'ml'},{name:'Fresh basil',qty:5,unit:'g'},{name:'Lemon',qty:0.5,unit:'whole'},{name:'Sourdough bread',qty:1,unit:'slice'}],
+      method:'Total about 35 min (10 prep, 20-30 roast), makes 2 portions (the source gave no portion count). Heat oven to 180C. Roast halved cherry tomatoes and whole garlic in the oil in a baking dish 20-30 min until soft and juicy. Stir in the beans, lemon zest, salt and pepper, and scatter over the basil. Serve in bowls with a slice of sourdough and a little extra oil.'},
+    {id:'air-fryer-tofu-rice-bowl',name:'Air-Fryer Tofu Rice Bowl',protein:'Tofu',mealTypes:['lunch'],cookStyle:'quick',portability:'reheat',time:20,proteinG:31,fibreG:5,kcal:600,
+      ingredients:[{name:'Firm tofu',qty:185,unit:'g'},{name:'Rice (dry)',qty:90,unit:'g'},{name:'Cucumber',qty:150,unit:'g'},{name:'Soy sauce',qty:15,unit:'ml'},{name:'Rice vinegar',qty:5,unit:'ml'},{name:'Maple syrup',qty:3,unit:'ml'},{name:'Chilli flakes & turmeric spice mix',qty:1,unit:'g'},{name:'Sesame seeds',qty:3,unit:'g'}],
+      method:'Total about 20 min (5 prep, 15 cook), makes 2 portions. Slice the tofu into large pieces and turn in the soy, vinegar, maple syrup, chilli and turmeric marinade for a few minutes. Air fry at 200C for 10 min, turning once and brushing on more marinade. Meanwhile cook the rice (1 part rice to 1.5 parts water, covered, until the water is absorbed). Top the rice with the tofu, sliced cucumber and sesame seeds. An oven at 200C for 10-15 min also works for the tofu.'},
+    {id:'paneer-biryani',name:'One-Pot Paneer Biryani',protein:'Paneer',mealTypes:['dinner'],cookStyle:'batch',portability:'reheat',time:40,proteinG:16,fibreG:3,kcal:545,
+      ingredients:[{name:'Paneer',qty:50,unit:'g'},{name:'Rice (dry)',qty:75,unit:'g'},{name:'Onion',qty:50,unit:'g'},{name:'Red pepper',qty:40,unit:'g'},{name:'Spinach',qty:25,unit:'g'},{name:'Garlic',qty:0.5,unit:'clove'},{name:'Fresh ginger',qty:2,unit:'g'},{name:'Green chilli',qty:1,unit:'g'},{name:'Tikka masala curry paste',qty:10,unit:'g'},{name:'Vegetable stock',qty:250,unit:'ml'},{name:'Olive oil',qty:8,unit:'ml'},{name:'Fresh coriander',qty:2,unit:'g'}],
+      method:'Total about 40 min (10 prep, 30 cook), one pot, makes 4 portions. Fry the paneer in the oil 4-5 min until slightly crisp and set aside. Soften the onion and pepper 3-4 min, add garlic, ginger and chilli for 1 min. Stir in the curry paste 1 min, then toast the rice 1-2 min. Add stock, bring to a simmer, cover and cook on low 15-20 min until the liquid is mostly absorbed. Fold in the spinach and paneer, cover 1-2 min, and top with coriander.'},
+    {id:'paneer-kidney-bean-coconut-curry',name:'Paneer, Kidney Bean & Coconut Curry with Rice',protein:'Paneer',mealTypes:['dinner'],cookStyle:'batch',portability:'reheat',time:50,proteinG:23,fibreG:8,kcal:775,
+      ingredients:[{name:'Paneer',qty:55,unit:'g'},{name:'Kidney beans',qty:60,unit:'g'},{name:'Rice (dry)',qty:75,unit:'g'},{name:'Coconut milk',qty:100,unit:'ml'},{name:'Vegetable stock',qty:60,unit:'ml'},{name:'Onion',qty:25,unit:'g'},{name:'Garlic',qty:0.7,unit:'clove'},{name:'Fresh ginger',qty:2,unit:'g'},{name:'Curry spice mix',qty:6,unit:'g'},{name:'Tomato puree',qty:10,unit:'g'},{name:'Sugar',qty:1,unit:'g'},{name:'Olive oil',qty:8,unit:'ml'},{name:'Lemon',qty:0.15,unit:'whole'},{name:'Fresh coriander',qty:5,unit:'g'}],
+      method:'Total about 50 min (15 prep, 35 cook), makes 4 portions. Cook the onion in oil on low about 10 min until caramelised. Add garlic, ginger, fennel and cumin seeds for a couple of minutes, then the curry powder, garam masala, paprika and chilli for a few seconds. Stir in tomato puree and sugar, then coconut milk and stock until smooth. Add kidney beans and simmer about 15 min until thick. Off the heat, fry the paneer 1-2 min per side until golden and stir it in with the lemon juice. Serve over cooked rice with coriander.'},
+    {id:'paneer-curry-rice',name:'One-Pot Paneer Curry with Rice',protein:'Paneer',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:30,proteinG:26,fibreG:4,kcal:820,
+      ingredients:[{name:'Paneer',qty:100,unit:'g'},{name:'Rice (dry)',qty:75,unit:'g'},{name:'Onion',qty:40,unit:'g'},{name:'Tomato',qty:90,unit:'g'},{name:'Garlic',qty:1.4,unit:'clove'},{name:'Fresh ginger',qty:4,unit:'g'},{name:'Green chilli',qty:5,unit:'g'},{name:'Curry spice mix',qty:6,unit:'g'},{name:'Cream',qty:30,unit:'ml'},{name:'Cooking oil',qty:15,unit:'ml'},{name:'Fresh coriander',qty:3,unit:'g'}],
+      method:'Total about 30 min (10 prep, 20 cook), makes 2 portions, needs a blender. Blend onion, tomato, garlic, ginger, green chilli and a little water to a paste. Fry a bay leaf and cumin seeds in the oil 10-20 sec, then add the paste with salt, chilli powder, turmeric and coriander and fry on high until the oil separates (under 5 min). Add a little water, fenugreek leaves, paneer, garam masala and cream, cover and cook 5 min. Top with coriander and serve over cooked rice.'},
+    {id:'air-fried-paneer-rice',name:'Air-Fried Paneer with Onion & Tomato and Rice',protein:'Paneer',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:25,proteinG:24,fibreG:3,kcal:655,
+      ingredients:[{name:'Paneer',qty:85,unit:'g'},{name:'Rice (dry)',qty:75,unit:'g'},{name:'Onion',qty:45,unit:'g'},{name:'Tomato',qty:45,unit:'g'},{name:'Natural yoghurt',qty:15,unit:'g'},{name:'Rapeseed oil',qty:10,unit:'ml'},{name:'Garam masala, turmeric & fenugreek spice mix',qty:3,unit:'g'},{name:'Sugar',qty:1,unit:'g'},{name:'Garlic',qty:0.7,unit:'clove'}],
+      method:'Total about 25 min (10 prep, 15 cook), makes 4 portions; an optional 2 hour marinade adds waiting time. Whisk yoghurt, oil, salt, sugar, spices and grated garlic in a pan that fits your air fryer. Add cubed paneer, onion and tomato and coat well (chill 2 hours or overnight if you have time). Air fry at 200C for 15 min, tossing once. Serve over cooked rice. The source salt amount looks high, so start with less.'}
   ];
 
   var CATEGORY_RULES = [
+    ['frozen green bean','Frozen'],['puree','Pantry & dry goods'],
     ['green bean','Fresh produce'],['baked bean','Pantry & dry goods'],['mixed bean','Pantry & dry goods'],
     ['black bean','Pantry & dry goods'],['kidney bean','Pantry & dry goods'],['chickpea','Pantry & dry goods'],['bean','Pantry & dry goods'],
     ['chicken','Meat & fish'],['salmon','Meat & fish'],['lamb','Meat & fish'],['tuna','Meat & fish'],['beef','Meat & fish'],
@@ -387,7 +422,10 @@
     ['dressing','Pantry & dry goods'],['vinaigrette','Pantry & dry goods'],['passata','Pantry & dry goods'],['hummus','Pantry & dry goods'],['olives','Pantry & dry goods'],
     ['honey','Pantry & dry goods'],['spice','Pantry & dry goods'],
     ['sauce','Pantry & dry goods'],['seasoning','Pantry & dry goods'],['toast','Pantry & dry goods'],['bread','Pantry & dry goods'],
-    ['oil','Pantry & dry goods'],['frozen pea','Frozen'],['pea','Frozen']
+    ['oil','Pantry & dry goods'],['frozen pea','Frozen'],['pea','Frozen'],
+    ['coconut milk','Pantry & dry goods'],['stock','Pantry & dry goods'],['paste','Pantry & dry goods'],['sugar','Pantry & dry goods'],
+    ['syrup','Pantry & dry goods'],['seed','Pantry & dry goods'],['cream','Dairy & chilled'],
+    ['jalapeno','Fresh produce'],['coriander','Fresh produce'],['basil','Fresh produce'],['chilli','Fresh produce']
   ];
   var CATEGORY_ORDER = ['Meat & fish','Protein','Fresh produce','Dairy & chilled','Pantry & dry goods','Frozen','Other'];
 
