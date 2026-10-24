@@ -227,6 +227,12 @@
     </div>
 
     <div class="card">
+      <h2>High-fibre rice sides</h2>
+      <p class="hint">Cook one alongside any meal. Quantities are per portion and are not added to the shopping list automatically, so add what you need yourself.</p>
+      <div id="sideList"></div>
+    </div>
+
+    <div class="card">
       <h2>Shopping list</h2>
       <div id="shopList"></div>
     </div>
@@ -401,8 +407,36 @@
       method:'Total about 30 min (10 prep, 20 cook), makes 2 portions, needs a blender. Blend onion, tomato, garlic, ginger, green chilli and a little water to a paste. Fry a bay leaf and cumin seeds in the oil 10-20 sec, then add the paste with salt, chilli powder, turmeric and coriander and fry on high until the oil separates (under 5 min). Add a little water, fenugreek leaves, paneer, garam masala and cream, cover and cook 5 min. Top with coriander and serve over cooked rice.'},
     {id:'air-fried-paneer-rice',name:'Air-Fried Paneer with Onion & Tomato and Rice',protein:'Paneer',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:25,proteinG:24,fibreG:3,kcal:655,
       ingredients:[{name:'Paneer',qty:85,unit:'g'},{name:'Rice (dry)',qty:75,unit:'g'},{name:'Onion',qty:45,unit:'g'},{name:'Tomato',qty:45,unit:'g'},{name:'Natural yoghurt',qty:15,unit:'g'},{name:'Rapeseed oil',qty:10,unit:'ml'},{name:'Garam masala, turmeric & fenugreek spice mix',qty:3,unit:'g'},{name:'Sugar',qty:1,unit:'g'},{name:'Garlic',qty:0.7,unit:'clove'}],
-      method:'Total about 25 min (10 prep, 15 cook), makes 4 portions; an optional 2 hour marinade adds waiting time. Whisk yoghurt, oil, salt, sugar, spices and grated garlic in a pan that fits your air fryer. Add cubed paneer, onion and tomato and coat well (chill 2 hours or overnight if you have time). Air fry at 200C for 15 min, tossing once. Serve over cooked rice. The source salt amount looks high, so start with less.'}
+      method:'Total about 25 min (10 prep, 15 cook), makes 4 portions; an optional 2 hour marinade adds waiting time. Whisk yoghurt, oil, salt, sugar, spices and grated garlic in a pan that fits your air fryer. Add cubed paneer, onion and tomato and coat well (chill 2 hours or overnight if you have time). Air fry at 200C for 15 min, tossing once. Serve over cooked rice. The source salt amount looks high, so start with less.'},
+
+    // ---- Batch 2: original recipes (written for this app, not copied from a source) ----
+    // Quantities are per portion. proteinG / fibreG / kcal are rough estimates (shown with ~ in the UI).
+    // Entries with side:true are rice sides. They are listed in the "High-fibre rice sides" card and
+    // are kept out of the meal planner (see MEALS), so a bowl of rice is never scheduled as a whole meal.
+    {id:'gujarati-chicken-curry',name:'Gujarati-Style Chicken Curry with Multigrain Rice & Yoghurt',protein:'Chicken',mealTypes:['lunch','dinner'],cookStyle:'batch',portability:'reheat',time:40,proteinG:40,fibreG:6,kcal:600,
+      ingredients:[{name:'Chicken thigh fillets',qty:150,unit:'g'},{name:'Onion',qty:60,unit:'g'},{name:'Chopped tomatoes',qty:100,unit:'g'},{name:'Garlic',qty:1,unit:'clove'},{name:'Fresh ginger',qty:5,unit:'g'},{name:'Green chilli',qty:5,unit:'g'},{name:'Coriander, cumin & turmeric spice mix',qty:5,unit:'g'},{name:'Jaggery or brown sugar',qty:5,unit:'g'},{name:'Lemon',qty:0.25,unit:'whole'},{name:'Cooking oil',qty:10,unit:'ml'},{name:'Fresh coriander',qty:5,unit:'g'},{name:'Rice (dry)',qty:20,unit:'g'},{name:'Quinoa (dry)',qty:20,unit:'g'},{name:'Red lentils (dry)',qty:20,unit:'g'},{name:'Natural yoghurt',qty:70,unit:'g'}],
+      method:'Total about 40 min (10 prep, 30 cook). Quantities are per portion. Rinse the rice, quinoa and red lentils together and simmer covered in about 140 ml water per portion for 15 min, then rest 5 min off the heat and fluff. Meanwhile heat the oil in a wide pan and cook the finely sliced onion 8 min until golden. Add the grated ginger, crushed garlic and chopped green chilli for 1 min, then the spice mix for 30 seconds. Stir in the chopped tomatoes and sugar and simmer 5 min until thick. Add the chicken pieces, cover and cook gently 15 min, stirring now and then and adding a splash of water if it catches. Finish with lemon juice and chopped coriander. Serve over the multigrain rice with the plain yoghurt alongside.'},
+    {id:'goan-salmon-curry',name:'Goan-Style Salmon Curry with Paratha & Grilled Veg',protein:'Salmon',mealTypes:['dinner'],cookStyle:'quick',portability:'reheat',time:35,proteinG:34,fibreG:6,kcal:780,
+      ingredients:[{name:'Salmon fillet',qty:130,unit:'g'},{name:'Coconut milk',qty:75,unit:'ml'},{name:'Onion',qty:90,unit:'g'},{name:'Garlic',qty:1,unit:'clove'},{name:'Green chilli',qty:5,unit:'g'},{name:'Coriander, turmeric & chilli spice mix',qty:5,unit:'g'},{name:'Tamarind paste',qty:5,unit:'g'},{name:'Cooking oil',qty:10,unit:'ml'},{name:'Fresh coriander',qty:5,unit:'g'},{name:'Frozen paratha',qty:1,unit:'whole'},{name:'Courgette',qty:80,unit:'g'},{name:'Mixed peppers',qty:80,unit:'g'}],
+      method:'Total about 35 min (10 prep, 25 cook). Slice about half the onion for the curry and cut the rest into wedges for the grill. Heat the grill to high, toss the courgette, peppers and onion wedges with half the oil and a pinch of salt, and grill 10-12 min, turning once, until charred at the edges. Meanwhile soften the sliced onion in the rest of the oil for 5 min. Add the crushed garlic and chopped green chilli for 1 min, then the spice mix for 30 seconds. Pour in the coconut milk, tamarind paste and a splash of water and simmer gently 6-8 min until slightly thickened. Add the skinned salmon pieces, cover and cook 6-8 min until just cooked through, stirring as little as possible so it does not break up. Warm the paratha as the packet says (usually a dry pan, 2-3 min a side). Stir in chopped coriander, season with salt, and serve with the paratha and grilled veg alongside. Warmed wholemeal pitta works if you have no paratha.'},
+
+    // ---- High-fibre rice sides (per portion) ----
+    {id:'side-rice-lentil-cabbage',side:true,name:'High-Fibre Rice Side: Red Lentil & Cabbage',protein:'Beans',mealTypes:['lunch','dinner'],cookStyle:'batch',portability:'reheat',time:20,proteinG:7,fibreG:4,kcal:190,
+      ingredients:[{name:'Rice (dry)',qty:30,unit:'g'},{name:'Red lentils (dry)',qty:20,unit:'g'},{name:'Cabbage',qty:50,unit:'g'}],
+      method:'Total about 20 min. Rinse the rice and red lentils together. Simmer covered in about 130 ml water and a pinch of salt on low heat for 10 min. Stir in the finely shredded cabbage, cover and cook 4-5 min more until the water is absorbed. Rest 5 min off the heat, then fluff with a fork. Red split lentils cook in about the same time as rice; whole green or brown lentils do not, so do not swap them in.'},
+    {id:'side-rice-black-bean',side:true,name:'High-Fibre Rice Side: Black Bean',protein:'Beans',mealTypes:['lunch','dinner'],cookStyle:'batch',portability:'reheat',time:20,proteinG:6,fibreG:4,kcal:200,
+      ingredients:[{name:'Rice (dry)',qty:40,unit:'g'},{name:'Black beans',qty:60,unit:'g'}],
+      method:'Total about 20 min. Rinse the rice and simmer it covered in about 100 ml water and a pinch of salt for 12-15 min until the water is absorbed. Stir in the drained, rinsed canned black beans, cover and leave 5 min to heat through, then fluff with a fork.'},
+    {id:'side-rice-kidney-bean-cabbage',side:true,name:'High-Fibre Rice Side: Kidney Bean & Cabbage',protein:'Beans',mealTypes:['lunch','dinner'],cookStyle:'batch',portability:'reheat',time:20,proteinG:7,fibreG:5,kcal:195,
+      ingredients:[{name:'Rice (dry)',qty:35,unit:'g'},{name:'Kidney beans',qty:60,unit:'g'},{name:'Cabbage',qty:40,unit:'g'}],
+      method:'Total about 20 min. Rinse the rice and simmer it covered in about 90 ml water and a pinch of salt for 10 min. Add the finely shredded cabbage and the drained, rinsed canned kidney beans, cover and cook 4-5 min more until the water is absorbed. Rest 5 min off the heat and fluff with a fork.'},
+    {id:'side-multigrain-quinoa-lentil',side:true,name:'High-Fibre Rice Side: Multigrain (Rice, Quinoa & Lentil)',protein:'Beans',mealTypes:['lunch','dinner'],cookStyle:'batch',portability:'reheat',time:20,proteinG:9,fibreG:4,kcal:215,
+      ingredients:[{name:'Rice (dry)',qty:20,unit:'g'},{name:'Quinoa (dry)',qty:20,unit:'g'},{name:'Red lentils (dry)',qty:20,unit:'g'}],
+      method:'Total about 20 min. Rinse the rice, quinoa and red lentils together. Simmer covered in about 140 ml water and a pinch of salt on low heat for 15 min until the water is absorbed. Rest 5 min off the heat, then fluff with a fork. This is the same multigrain rice used in the Gujarati-style chicken curry.'}
   ];
+
+  // Meals the planner can schedule. Rice sides (side:true) are shown separately, never as a whole meal.
+  var MEALS = RECIPES.filter(function(r){ return !r.side; });
 
   var CATEGORY_RULES = [
     ['frozen green bean','Frozen'],['puree','Pantry & dry goods'],
@@ -425,7 +459,8 @@
     ['oil','Pantry & dry goods'],['frozen pea','Frozen'],['pea','Frozen'],
     ['coconut milk','Pantry & dry goods'],['stock','Pantry & dry goods'],['paste','Pantry & dry goods'],['sugar','Pantry & dry goods'],
     ['syrup','Pantry & dry goods'],['seed','Pantry & dry goods'],['cream','Dairy & chilled'],
-    ['jalapeno','Fresh produce'],['coriander','Fresh produce'],['basil','Fresh produce'],['chilli','Fresh produce']
+    ['jalapeno','Fresh produce'],['coriander','Fresh produce'],['basil','Fresh produce'],['chilli','Fresh produce'],
+    ['cabbage','Fresh produce'],['paratha','Frozen']
   ];
   var CATEGORY_ORDER = ['Meat & fish','Protein','Fresh produce','Dairy & chilled','Pantry & dry goods','Frozen','Other'];
 
@@ -484,7 +519,7 @@
   }
 
   function filterPool(opts){
-    return RECIPES.filter(function(r){
+    return MEALS.filter(function(r){
       if (opts.proteins.length && opts.proteins.indexOf(r.protein) === -1) return false;
       if (opts.maxTime && r.time > opts.maxTime) return false;
       if (opts.exclusions.length){
@@ -529,7 +564,7 @@
     };
 
     var pool = filterPool(opts);
-    if (!pool.length) pool = RECIPES.slice();
+    if (!pool.length) pool = MEALS.slice();
 
     var lunchSlots = [], dinnerSlots = [];
     var slots = buildSlots(opts.days, opts.mealsPerDay);
@@ -567,7 +602,25 @@
     return {opts:opts, slots:slots};
   }
 
+  function renderSides(){
+    var sides = RECIPES.filter(function(r){ return r.side; });
+    document.getElementById('sideList').innerHTML = sides.map(function(r){
+      var ingLines = r.ingredients.map(function(ing){
+        var q = formatQty(ing.unit, ing.qty);
+        var unitLabel = (ing.unit==='g'||ing.unit==='ml') ? ing.unit : (ing.unit==='whole' ? '' : (' '+ing.unit+(q===1?'':'s')));
+        return '<li>'+ing.name+' — '+q+unitLabel+'</li>';
+      }).join('');
+      return '<div class="recipe">'+
+        '<div class="recipe-head"><h3>'+r.name+'</h3><span class="meta">'+r.time+' min · ~'+r.proteinG+'g protein · ~'+r.fibreG+'g fibre · ~'+r.kcal+' kcal/portion</span></div>'+
+        '<div><span class="tag">Side</span><span class="tag">per portion</span></div>'+
+        '<ul>'+ingLines+'</ul>'+
+        '<p class="method">'+r.method+'</p>'+
+      '</div>';
+    }).join('');
+  }
+
   function renderPlan(plan){
+    renderSides();
     var summaryBits = [];
     if (plan.opts.store) summaryBits.push('Store: ' + plan.opts.store);
     if (plan.opts.budget) summaryBits.push('Budget: ' + plan.opts.budget + ' (reminder only — not price-calculated)');
