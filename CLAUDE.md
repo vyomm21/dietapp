@@ -22,6 +22,10 @@ Conventions:
 - A new kind of ingredient needs a rule in `CATEGORY_RULES` (checked in order, first match wins). The tests fail if any ingredient lands in `Other`.
 - Rice sides carry `side:true` and an id starting `side-` (the tests enforce both). They are excluded from the planner (`MEALS`) and shown in the "High-fibre rice sides" card instead, so a bowl of rice is never scheduled as a whole meal.
 
+## Recipe picker
+
+The "Pick what you fancy" card lists every entry in `RECIPES` (meals and rice sides) automatically, so a new recipe needs no extra wiring. Picked meals are guaranteed in the plan and ignore the protein, time and exclusion filters (the plan warns when a pick breaks a limit). Picked rice sides are not scheduled as meals: they get one portion per meal and are added to the shopping list.
+
 ## Workflow
 
 - **Recipe or data-only changes** (new recipes, ingredient names, category rules, wording inside `RECIPES`): run the tests, make one commit per request, and push straight to `main`.

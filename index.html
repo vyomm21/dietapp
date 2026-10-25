@@ -1,3 +1,5 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Meal Planner</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..600&family=Inter:wght@400;500;600;700&display=swap">
@@ -47,9 +49,10 @@
   .field:last-child{margin-bottom:0;}
   label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
   .sub{font-weight:400;color:var(--text-muted);font-size:12px;}
-  input[type="text"],input[type="number"],textarea,select{
+  /* 16px inputs stop iOS Safari zooming the page when a field is tapped */
+  input[type="text"],input[type="number"],input[type="search"],textarea,select{
     width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
-    padding:10px 12px;font-size:14px;color:var(--text);font-family:inherit;
+    padding:10px 12px;font-size:16px;min-height:44px;color:var(--text);font-family:inherit;
   }
   textarea{resize:vertical;min-height:56px;}
   input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
@@ -58,22 +61,22 @@
   .row > .field{flex:1 1 140px;}
 
   .chips{display:flex;gap:8px;flex-wrap:wrap;}
-  .chip{border:1px solid var(--border);background:var(--surface-2);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;user-select:none;color:var(--text);position:relative;}
+  .chip{border:1px solid var(--border);background:var(--surface-2);border-radius:999px;padding:10px 16px;min-height:44px;display:inline-flex;align-items:center;font-size:14px;cursor:pointer;user-select:none;color:var(--text);position:relative;}
   .chip input{position:absolute;opacity:0;pointer-events:none;}
   .chip.active{background:var(--accent);color:var(--accent-contrast);border-color:var(--accent);font-weight:600;}
 
   fieldset{border:none;padding:0;margin:0;}
   .radio-row{display:flex;flex-direction:column;gap:8px;}
-  .radio-opt{display:flex;align-items:flex-start;gap:8px;font-size:14px;cursor:pointer;}
-  .radio-opt input{margin-top:3px;accent-color:var(--accent);}
+  .radio-opt{display:flex;align-items:flex-start;gap:10px;font-size:14px;cursor:pointer;padding:6px 0;min-height:44px;}
+  .radio-opt input{width:20px;height:20px;flex:none;margin:2px 0 0;accent-color:var(--accent);}
   .radio-opt .opt-label{font-weight:500;}
   .radio-opt .opt-sub{color:var(--text-muted);font-size:12px;display:block;}
 
   button.primary{
     background:var(--accent);color:var(--accent-contrast);border:none;border-radius:10px;
-    padding:14px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;
+    padding:14px;min-height:48px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;
   }
-  button.secondary{background:transparent;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+  button.secondary{background:transparent;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 16px;min-height:44px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
   .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
 
   #results{display:none;}
@@ -103,6 +106,32 @@
   #copyMsg.show{opacity:1;}
   #planOutput{position:absolute;left:-9999px;top:-9999px;}
 
+  html{-webkit-text-size-adjust:100%;}
+
+  /* recipe picker */
+  .pick-tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .pick-tools input{flex:2 1 180px;width:auto;}
+  .pick-tools select{flex:1 1 130px;width:auto;}
+  .pick-list{max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);}
+  .pick-row{display:flex;gap:12px;align-items:flex-start;padding:12px;margin:0;border-bottom:1px solid var(--border);cursor:pointer;font-weight:400;font-size:14px;}
+  .pick-row:last-child{border-bottom:none;}
+  .pick-row input{width:22px;height:22px;flex:none;margin:1px 0 0;accent-color:var(--accent);}
+  .pick-row.on{background:var(--tag-bg);}
+  .pick-name{display:block;font-weight:600;}
+  .pick-meta{display:block;color:var(--text-muted);font-size:12px;font-weight:400;}
+  .pick-empty{padding:14px;margin:0;color:var(--text-muted);font-size:13px;}
+  .pick-summary{font-size:13px;color:var(--text-muted);margin:10px 0 0;}
+  #pickClear{margin-top:10px;}
+  .warn{color:#8A5300;}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .warn{color:#E3B15C;}}
+  :root[data-theme="dark"] .warn{color:#E3B15C;}
+
+  @media (max-width:480px){
+    body{padding-inline:14px;padding-block:20px;}
+    .card{padding:16px;}
+    th,td{padding:8px 4px;}
+  }
+
   footer{margin-top:28px;color:var(--text-muted);font-size:12px;text-align:center;}
 </style>
 
@@ -122,6 +151,18 @@
         <div class="field"><label for="mealsPerDay">Meals / day</label><input type="number" id="mealsPerDay" min="1" max="4" value="2"></div>
         <div class="field"><label for="maxTime">Max cook time <span class="sub">(min)</span></label><input type="number" id="maxTime" min="0" max="180" value="60"></div>
       </div>
+    </div>
+
+    <div class="card">
+      <h2>Pick what you fancy <span class="sub">(optional)</span></h2>
+      <p class="hint">Tick any recipes you are craving. They are guaranteed in your plan, and the planner fills the remaining meals at random. A rice side joins every meal. Leave everything unticked for a fully random plan.</p>
+      <div class="pick-tools">
+        <input type="search" id="pickSearch" placeholder="Search recipes or ingredients" aria-label="Search recipes" autocomplete="off">
+        <select id="pickProtein" aria-label="Filter recipes"></select>
+      </div>
+      <div class="pick-list" id="pickList"></div>
+      <p class="pick-summary" id="pickSummary"></p>
+      <button type="button" class="secondary" id="pickClear" hidden>Clear picks</button>
     </div>
 
     <div class="card">
@@ -213,6 +254,7 @@
     <div class="card">
       <h2>Your meal plan</h2>
       <p class="hint" id="planSummary"></p>
+      <p class="hint warn" id="planWarnings" hidden></p>
       <div class="table-wrap"><table id="planTable"></table></div>
       <div class="btn-row">
         <button type="button" class="secondary" id="regenBtn">Shuffle recipes</button>
@@ -228,7 +270,7 @@
 
     <div class="card">
       <h2>High-fibre rice sides</h2>
-      <p class="hint">Cook one alongside any meal. Quantities are per portion and are not added to the shopping list automatically, so add what you need yourself.</p>
+      <p class="hint">Cook one alongside any meal. Quantities below are per portion. Tick one in "Pick what you fancy" to add it to every meal and to the shopping list.</p>
       <div id="sideList"></div>
     </div>
 
@@ -569,6 +611,20 @@
     var lunchSlots = [], dinnerSlots = [];
     var slots = buildSlots(opts.days, opts.mealsPerDay);
     slots.forEach(function(s){ (s.type === 'lunch' ? lunchSlots : dinnerSlots).push(s); });
+    var lists = {lunch: lunchSlots, dinner: dinnerSlots};
+
+    // Picked recipes are guaranteed: they ignore the protein, time and exclusion filters
+    // and each takes one place in the rotation that the planner would otherwise fill itself.
+    var pickedMeals = MEALS.filter(function(r){ return picked[r.id]; });
+    var pickedSides = RECIPES.filter(function(r){ return r.side && picked[r.id]; });
+    var pinned = {lunch: [], dinner: []};
+    pickedMeals.forEach(function(r){
+      var types = r.mealTypes.filter(function(t){ return lists[t].length; });
+      if (!types.length) types = ['lunch','dinner'].filter(function(t){ return lists[t].length; });
+      types.sort(function(a,b){ return pinned[a].length/lists[a].length - pinned[b].length/lists[b].length; });
+      pinned[types[0]].push(r);
+    });
+    var dropped = [];
 
     function assign(slotList, type){
       if (!slotList.length) return;
@@ -578,28 +634,50 @@
       var scored = base.map(function(r){ return {r:r, score:scoreRecipe(r, opts, type)}; });
       scored.sort(function(a,b){ return b.score - a.score; });
 
-      var chosen = [];
-      var chosenIds = {};
+      var fixed = pinned[type].slice(0, slotList.length);
+      dropped = dropped.concat(pinned[type].slice(slotList.length));
+      var room = slotList.length - fixed.length;
+      var used = {}, covered = {};
+      fixed.forEach(function(r){ used[r.id] = true; covered[r.protein] = true; });
+
+      var auto = [];
       if (opts.proteins.length){
-        // guarantee every selected protein appears at least once, highest-scoring recipe first
+        // guarantee every selected protein appears at least once (a pick of that protein counts)
         opts.proteins.forEach(function(p){
-          var matches = scored.filter(function(s){ return s.r.protein === p; });
-          if (matches.length){ chosen.push(matches[0].r); chosenIds[matches[0].r.id] = true; }
+          if (covered[p]) return;
+          var matches = scored.filter(function(s){ return s.r.protein === p && !used[s.r.id]; });
+          if (matches.length){ auto.push(matches[0].r); used[matches[0].r.id] = true; }
         });
       }
-      var desiredCount = Math.max(chosen.length, Math.min(base.length, Math.ceil(slotList.length/3)));
-      for (var i=0; i<scored.length && chosen.length < desiredCount; i++){
-        if (!chosenIds[scored[i].r.id]){ chosen.push(scored[i].r); chosenIds[scored[i].r.id] = true; }
+      var desiredCount = Math.max(fixed.length + auto.length, Math.min(base.length, Math.ceil(slotList.length/3)));
+      for (var i=0; i<scored.length && fixed.length + auto.length < desiredCount; i++){
+        if (!used[scored[i].r.id]){ auto.push(scored[i].r); used[scored[i].r.id] = true; }
       }
-      if (!chosen.length) chosen = [scored[0].r];
 
-      chosen = shuffle(chosen);
+      var chosen = shuffle(fixed.concat(shuffle(auto).slice(0, room)));
+      if (!chosen.length) chosen = [scored[0].r];
       slotList.forEach(function(slot, i){ slot.recipe = chosen[i % chosen.length]; });
     }
     assign(lunchSlots, 'lunch');
     assign(dinnerSlots, 'dinner');
 
-    return {opts:opts, slots:slots};
+    var warnings = [];
+    if (dropped.length){
+      warnings.push(dropped.length + ' pick' + (dropped.length === 1 ? '' : 's') + ' did not fit (' +
+        dropped.map(function(r){ return r.name; }).join(', ') + '). Add more days or meals per day.');
+    }
+    pickedMeals.concat(pickedSides).forEach(function(r){
+      if (dropped.indexOf(r) !== -1) return;
+      if (opts.maxTime && r.time > opts.maxTime){
+        warnings.push(r.name + ' takes about ' + r.time + ' min, over your ' + opts.maxTime + ' min limit. Kept because you picked it.');
+      }
+      var hit = opts.exclusions.filter(function(ex){
+        return r.ingredients.some(function(ing){ return ing.name.toLowerCase().indexOf(ex) !== -1; });
+      });
+      if (hit.length) warnings.push(r.name + ' contains ' + hit.join(', ') + ', which you asked to avoid. Kept because you picked it.');
+    });
+
+    return {opts:opts, slots:slots, sides:pickedSides, warnings:warnings};
   }
 
   function renderSides(){
@@ -626,7 +704,11 @@
     if (plan.opts.budget) summaryBits.push('Budget: ' + plan.opts.budget + ' (reminder only — not price-calculated)');
     if (plan.opts.macroSplit && plan.opts.macroSplit !== 'No preference') summaryBits.push('Macro split: ' + plan.opts.macroSplit);
     if (plan.opts.fibreTarget) summaryBits.push('Fibre target: ~' + plan.opts.fibreTarget + 'g/day');
+    if (plan.sides && plan.sides.length) summaryBits.push('Side with every meal: ' + plan.sides.map(function(r){ return r.name; }).join(', '));
     document.getElementById('planSummary').textContent = summaryBits.join(' · ');
+    var warnEl = document.getElementById('planWarnings');
+    warnEl.textContent = (plan.warnings || []).join(' ');
+    warnEl.hidden = !(plan.warnings && plan.warnings.length);
 
     var table = document.getElementById('planTable');
     var mealsPerDay = plan.opts.mealsPerDay;
@@ -653,8 +735,14 @@
     var seen = {};
     plan.slots.forEach(function(s){ if(!seen[s.recipe.id]){ seen[s.recipe.id]=true; distinctRecipes.push(s.recipe); } });
 
+    // picked rice sides go with every meal, so they get one portion per meal in the plan
+    var sidePortions = plan.opts.days * plan.opts.mealsPerDay;
+    var sideRecipes = plan.sides || [];
+    sideRecipes.forEach(function(r){ counts[r.id] = sidePortions; });
+    var allRecipes = distinctRecipes.concat(sideRecipes);
+
     var recipeListEl = document.getElementById('recipeList');
-    recipeListEl.innerHTML = distinctRecipes.map(function(r){
+    recipeListEl.innerHTML = allRecipes.map(function(r){
       var portions = counts[r.id];
       var ingLines = r.ingredients.map(function(ing){
         var total = formatQty(ing.unit, ing.qty * portions);
@@ -663,17 +751,17 @@
       }).join('');
       return '<div class="recipe">'+
         '<div class="recipe-head"><h3>'+r.name+'</h3><span class="meta">'+r.time+' min · ~'+r.proteinG+'g protein · ~'+r.fibreG+'g fibre · ~'+r.kcal+' kcal/portion</span></div>'+
-        '<div><span class="tag">'+r.protein+'</span><span class="tag">'+(r.cookStyle==='batch'?'batch-friendly':'quick-fresh')+'</span><span class="tag">'+(r.portability==='cold'?'lunchbox-cold':'reheats well')+'</span><span class="tag">×'+portions+' portion'+(portions===1?'':'s')+'</span></div>'+
+        '<div>'+(r.side ? '<span class="tag">Side</span>' : '<span class="tag">'+r.protein+'</span><span class="tag">'+(r.cookStyle==='batch'?'batch-friendly':'quick-fresh')+'</span><span class="tag">'+(r.portability==='cold'?'lunchbox-cold':'reheats well')+'</span>')+'<span class="tag">×'+portions+' portion'+(portions===1?'':'s')+'</span></div>'+
         '<ul>'+ingLines+'</ul>'+
         '<p class="method">'+r.method+'</p>'+
       '</div>';
     }).join('');
 
     var totals = {};
-    plan.slots.forEach(function(s){
-      s.recipe.ingredients.forEach(function(ing){
+    allRecipes.forEach(function(r){
+      r.ingredients.forEach(function(ing){
         var key = ing.name + '|' + ing.unit;
-        totals[key] = (totals[key] || 0) + ing.qty;
+        totals[key] = (totals[key] || 0) + ing.qty * counts[r.id];
       });
     });
     var grouped = {};
@@ -693,7 +781,7 @@
       return '<div class="shop-group"><h4>'+cat+'</h4><ul>'+items+'</ul></div>';
     }).join('');
 
-    lastPlan = {plan:plan, distinctRecipes:distinctRecipes, counts:counts, grouped:grouped};
+    lastPlan = {plan:plan, distinctRecipes:allRecipes, counts:counts, grouped:grouped};
   }
 
   function planAsText(){
@@ -704,6 +792,8 @@
     if (opts.budget) lines.push('Budget: ' + opts.budget + ' (reminder only — not price-calculated)');
     if (opts.macroSplit && opts.macroSplit !== 'No preference') lines.push('Macro split: ' + opts.macroSplit);
     if (opts.fibreTarget) lines.push('Fibre target: ~' + opts.fibreTarget + 'g/day');
+    if (lastPlan.plan.sides && lastPlan.plan.sides.length) lines.push('Side with every meal: ' + lastPlan.plan.sides.map(function(r){ return r.name; }).join(', '));
+    (lastPlan.plan.warnings || []).forEach(function(w){ lines.push('Note: ' + w); });
     lines.push('');
     var byDay = {};
     lastPlan.plan.slots.forEach(function(s){ (byDay[s.day]=byDay[s.day]||[]).push(s); });
@@ -728,6 +818,62 @@
     });
     return lines.join('\n');
   }
+
+  // ---- Recipe picker: tick what you fancy; picks are guaranteed, the planner fills the rest ----
+  var picked = {};
+  var pickListEl = document.getElementById('pickList');
+  var pickSearchEl = document.getElementById('pickSearch');
+  var pickProteinEl = document.getElementById('pickProtein');
+  var pickSummaryEl = document.getElementById('pickSummary');
+
+  (function buildPickFilter(){
+    var seen = {}, html = '<option value="">All recipes</option>';
+    MEALS.forEach(function(r){
+      if (!seen[r.protein]){ seen[r.protein] = true; html += '<option value="'+r.protein+'">'+r.protein+'</option>'; }
+    });
+    pickProteinEl.innerHTML = html + '<option value="__side">Rice sides</option>';
+  })();
+
+  function renderPickList(){
+    var words = pickSearchEl.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    var f = pickProteinEl.value;
+    var rows = RECIPES.filter(function(r){
+      if (f === '__side'){ if (!r.side) return false; }
+      else if (f && (r.side || r.protein !== f)) return false;
+      var hay = (r.name + ' ' + r.protein + ' ' + r.ingredients.map(function(i){ return i.name; }).join(' ')).toLowerCase();
+      return words.every(function(w){ return hay.indexOf(w) !== -1; });
+    });
+    pickListEl.innerHTML = rows.length ? rows.map(function(r){
+      return '<label class="pick-row'+(picked[r.id] ? ' on' : '')+'"><input type="checkbox" value="'+r.id+'"'+(picked[r.id] ? ' checked' : '')+'>'+
+        '<span><span class="pick-name">'+r.name+'</span>'+
+        '<span class="pick-meta">'+(r.side ? 'Side' : r.protein)+' · '+r.time+' min · ~'+r.fibreG+'g fibre · ~'+r.kcal+' kcal</span></span></label>';
+    }).join('') : '<p class="pick-empty">Nothing matches. Try a different word.</p>';
+  }
+
+  function renderPickSummary(){
+    var chosen = RECIPES.filter(function(r){ return picked[r.id]; });
+    var n = (parseInt(val('days'),10) || 1) * (parseInt(val('mealsPerDay'),10) || 1);
+    pickSummaryEl.textContent = chosen.length
+      ? chosen.length + ' picked: ' + chosen.map(function(r){ return r.name; }).join(', ') + '. Guaranteed in your plan of ' + n + ' meals.'
+      : 'Nothing picked, so the planner chooses everything. Your plan has ' + n + ' meals.';
+    document.getElementById('pickClear').hidden = !chosen.length;
+  }
+
+  pickListEl.addEventListener('change', function(e){
+    var t = e.target;
+    if (!t || t.type !== 'checkbox') return;
+    if (t.checked) picked[t.value] = true; else delete picked[t.value];
+    t.parentNode.classList.toggle('on', t.checked);
+    renderPickSummary();
+  });
+  pickSearchEl.addEventListener('input', renderPickList);
+  // Enter in the search box must not submit the whole form
+  pickSearchEl.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); pickSearchEl.blur(); } });
+  pickProteinEl.addEventListener('change', renderPickList);
+  document.getElementById('pickClear').addEventListener('click', function(){ picked = {}; renderPickList(); renderPickSummary(); });
+  ['days','mealsPerDay'].forEach(function(id){ document.getElementById(id).addEventListener('input', renderPickSummary); });
+  renderPickList();
+  renderPickSummary();
 
   document.getElementById('reqForm').addEventListener('submit', function(e){
     e.preventDefault();
@@ -794,5 +940,6 @@
       }
     }
   } catch(e){}
+  renderPickSummary();
 })();
 </script>
