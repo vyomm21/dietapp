@@ -29,7 +29,7 @@ The "Pick what you fancy" card lists every entry in `RECIPES` (meals and rice si
 ## Workflow
 
 - **Recipe or data-only changes** (new recipes, ingredient names, category rules, wording inside `RECIPES`): run the tests, make one commit per request, and push straight to `main`.
-- **Anything else** (planner or scoring logic, layout, form fields, new tooling, docs, this file): push a branch and tell the owner, who merges it.
+- **Anything else** (planner or scoring logic, layout, form fields, new tooling, docs, this file): make the change on a local branch, run both tests, and come back to the owner with the results. Do not push yet. When the owner replies "push", do the whole job yourself: push the branch, open the pull request, merge it into `main`, and report the commit sha and how to undo it. The owner never has to click merge. Open and merge the PR with the REST API (`gh api repos/vyomm21/dietapp/pulls ...`, `gh api -X PUT .../pulls/N/merge`), because `gh pr create` and `gh pr merge` use GraphQL, which is blocked in Claude Code sessions.
 - Always: the tests must pass first; never force-push or rewrite history on `main`; if you are unsure what to add, ask before building.
 - Reply format: one line saying what was added, a short list of what changed, and how to undo it (`git revert <sha>`).
 
