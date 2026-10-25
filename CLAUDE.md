@@ -22,10 +22,14 @@ Conventions:
 - A new kind of ingredient needs a rule in `CATEGORY_RULES` (checked in order, first match wins). The tests fail if any ingredient lands in `Other`.
 - Rice sides carry `side:true` and an id starting `side-` (the tests enforce both). They are excluded from the planner (`MEALS`) and shown in the "High-fibre rice sides" card instead, so a bowl of rice is never scheduled as a whole meal.
 
+## Recipe picker
+
+The "Pick what you fancy" card lists every entry in `RECIPES` (meals and rice sides) automatically, so a new recipe needs no extra wiring. Picked meals are guaranteed in the plan and ignore the protein, time and exclusion filters (the plan warns when a pick breaks a limit). Picked rice sides are not scheduled as meals: they get one portion per meal and are added to the shopping list.
+
 ## Workflow
 
 - **Recipe or data-only changes** (new recipes, ingredient names, category rules, wording inside `RECIPES`): run the tests, make one commit per request, and push straight to `main`.
-- **Anything else** (planner or scoring logic, layout, form fields, new tooling, docs, this file): push a branch and tell the owner, who merges it.
+- **Anything else** (planner or scoring logic, layout, form fields, new tooling, docs, this file): make the change on a local branch, run both tests, and come back to the owner with the results. Do not push yet. When the owner replies "push", do the whole job yourself: push the branch, open the pull request, merge it into `main`, and report the commit sha and how to undo it. The owner never has to click merge. Open and merge the PR with the REST API (`gh api repos/vyomm21/dietapp/pulls ...`, `gh api -X PUT .../pulls/N/merge`), because `gh pr create` and `gh pr merge` use GraphQL, which is blocked in Claude Code sessions.
 - Always: the tests must pass first; never force-push or rewrite history on `main`; if you are unsure what to add, ask before building.
 - Reply format: one line saying what was added, a short list of what changed, and how to undo it (`git revert <sha>`).
 
